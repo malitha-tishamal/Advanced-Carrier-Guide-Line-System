@@ -4,7 +4,13 @@
 
         <li class="nav-item">
             <a class="nav-link" href="index.php">
-                <i class="bi bi-house-door"></i> <span>Home</span>
+               <i class="bi bi-robot"></i> <span>Former Students AI</span>
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link" href="active-student-auto.php">
+               <i class="bi bi-robot"></i> <span>Active Students AI</span>
             </a>
         </li>
 

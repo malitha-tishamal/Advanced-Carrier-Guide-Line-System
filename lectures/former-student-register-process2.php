@@ -1,44 +1,67 @@
 <?php
 session_start();
-include_once("../includes/db-conn.php");
+require_once '../includes/db-conn.php';
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Sanitize input
-    $username = mysqli_real_escape_string($conn, $_POST['username']);
-    $reg_id = mysqli_real_escape_string($conn, $_POST['reg_id']);
-    $nic = strtoupper(mysqli_real_escape_string($conn, $_POST['nic']));
-    $email = mysqli_real_escape_string($conn, $_POST['email']);
-    $mobile = mysqli_real_escape_string($conn, $_POST['mobile']);
-    $study_year = mysqli_real_escape_string($conn, $_POST['study_year']);
-    $nowstatus = mysqli_real_escape_string($conn, $_POST['nowstatus']);
-    $password = password_hash($_POST['password'], PASSWORD_DEFAULT); // Hashed password
+// Check if form submitted
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-    // Check for duplicate registration ID or email
-    $check_query = "SELECT * FROM former_students WHERE reg_id = '$reg_id' OR email = '$email'";
-    $check_result = mysqli_query($conn, $check_query);
+    // Collect and sanitize inputs
+    $username    = trim($_POST['username']);
+    $course_id   = intval($_POST['course_id']);
+    $reg_id      = trim($_POST['reg_id']);
+    $nic         = strtoupper(trim($_POST['nic']));
+    $email       = filter_var(trim($_POST['email']), FILTER_VALIDATE_EMAIL);
+    $mobile      = trim($_POST['mobile']);
+    $study_year  = intval($_POST['study_year']);
+    $nowstatus   = $_POST['nowstatus'] ?? '';
+    $password    = $_POST['password'];
 
-    if (mysqli_num_rows($check_result) > 0) {
+    // Basic validation
+    if (!$username || !$course_id || !$reg_id || !$nic || !$email || !$mobile || !$study_year || !$nowstatus || !$password) {
         $_SESSION['status'] = 'error';
-        $_SESSION['message'] = "Email or Registration ID already exists!";
-        header("Location: add-former-student.php");
+        $_SESSION['message'] = 'Please fill in all required fields!';
+        header('Location: add-former-student.php');
         exit();
     }
 
-    // Insert user into DB
-    $insert_query = "INSERT INTO former_students 
-        (username, reg_id, nic, email, mobile, study_year, nowstatus, password) 
-        VALUES 
-        ('$username', '$reg_id', '$nic', '$email', '$mobile', '$study_year', '$nowstatus', '$password')";
+    // Check if email or reg_id already exists
+    $stmt = $conn->prepare("SELECT id FROM former_students WHERE email = ? OR reg_id = ?");
+    $stmt->bind_param("ss", $email, $reg_id);
+    $stmt->execute();
+    $stmt->store_result();
+    if ($stmt->num_rows > 0) {
+        $_SESSION['status'] = 'error';
+        $_SESSION['message'] = 'Email or Registration ID already exists!';
+        $stmt->close();
+        header('Location: add-former-student.php');
+        exit();
+    }
+    $stmt->close();
 
-    if (mysqli_query($conn, $insert_query)) {
+    // Hash the password
+    $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+
+    // Insert into former_students table
+    $stmt = $conn->prepare("INSERT INTO former_students (username, course_id, reg_id, nic, email, mobile, study_year, nowstatus, password, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
+    $stmt->bind_param("sissssiss", $username, $course_id, $reg_id, $nic, $email, $mobile, $study_year, $nowstatus, $hashed_password);
+
+    if ($stmt->execute()) {
         $_SESSION['status'] = 'success';
-        $_SESSION['message'] = "Account created successfully!";
+        $_SESSION['message'] = 'Former student account created successfully!';
+        $stmt->close();
+        header('Location: add-former-student.php');
+        exit();
     } else {
         $_SESSION['status'] = 'error';
-        $_SESSION['message'] = "Error: " . mysqli_error($conn);
+        $_SESSION['message'] = 'Database error: ' . $stmt->error;
+        $stmt->close();
+        header('Location: add-former-student.php');
+        exit();
     }
 
-    header("Location: add-former-student.php");
+} else {
+    // Invalid access
+    header('Location: add-former-student.php');
     exit();
 }
 ?>

@@ -26,288 +26,399 @@ $company_name = $_SESSION['company_name'];
 // Get filter values from GET (sanitize)
 $education_year = isset($_GET['education_year']) ? intval($_GET['education_year']) : '';
 $now_status = isset($_GET['now_status']) ? $_GET['now_status'] : '';
+$skill_filter = isset($_GET['skill_filter']) ? $_GET['skill_filter'] : '';
 
-// Enhanced AI Matching Algorithm
-class CandidateMatcher {
+/**
+ * ADVANCED AI CANDIDATE MATCHER
+ * Implements machine learning-like matching with multiple weighted factors
+ */
+class AdvancedAICandidateMatcher {
     private $conn;
     private $company_id;
+    private $skill_ontology;
     
     public function __construct($conn, $company_id) {
         $this->conn = $conn;
         $this->company_id = $company_id;
+        $this->initializeSkillOntology();
     }
     
-    // Calculate match score (0-100)
-    public function calculateMatchScore($candidate, $skills) {
-        $totalScore = 0;
-        $maxPossibleScore = 0;
-        
-        // 1. Education Match (20 points) - FIXED
-        $education_score = $this->calculateEducationScore($candidate);
-        $totalScore += $education_score;
-        $maxPossibleScore += 20;
-        
-        // 2. Skills Match (30 points)
-        $skills_score = $this->calculateSkillsScore($skills);
-        $totalScore += $skills_score;
-        $maxPossibleScore += 30;
-        
-        // 3. Experience Level (25 points)
-        $experience_score = $this->calculateExperienceScore($candidate);
-        $totalScore += $experience_score;
-        $maxPossibleScore += 25;
-        
-        // 4. Profile Completeness (15 points)
-        $profile_score = $this->calculateProfileCompleteness($candidate, $skills);
-        $totalScore += $profile_score;
-        $maxPossibleScore += 15;
-        
-        // 5. Social Presence (10 points) - FIXED
-        $social_score = $this->calculateSocialScore($candidate);
-        $totalScore += $social_score;
-        $maxPossibleScore += 10;
-        
-        // Normalize to 0-100 scale
-        $finalScore = $maxPossibleScore > 0 ? ($totalScore / $maxPossibleScore) * 100 : 0;
-        
-        return [
-            'score' => round($finalScore, 1),
-            'breakdown' => [
-                'education' => $education_score,
-                'skills' => $skills_score,
-                'experience' => $experience_score,
-                'profile' => $profile_score,
-                'social' => $social_score
-            ]
+    private function initializeSkillOntology() {
+        // Skill relationship mapping for enhanced matching
+        $this->skill_ontology = [
+            'php' => ['laravel', 'symfony', 'codeigniter', 'wordpress', 'magento'],
+            'javascript' => ['react', 'vue', 'angular', 'nodejs', 'express', 'typescript'],
+            'python' => ['django', 'flask', 'pandas', 'numpy', 'tensorflow', 'machine learning'],
+            'java' => ['spring', 'hibernate', 'android', 'kotlin', 'microservices'],
+            'react' => ['redux', 'react native', 'next.js', 'graphql'],
+            'laravel' => ['eloquent', 'blade', 'artisan', 'composer'],
+            'nodejs' => ['express', 'mongodb', 'socket.io', 'rest api'],
+            'database' => ['mysql', 'postgresql', 'mongodb', 'redis', 'sql'],
+            'cloud' => ['aws', 'azure', 'google cloud', 'docker', 'kubernetes'],
+            'mobile' => ['android', 'ios', 'flutter', 'react native', 'swift'],
+            'ai' => ['machine learning', 'deep learning', 'tensorflow', 'pytorch', 'nlp'],
+            'devops' => ['docker', 'kubernetes', 'jenkins', 'gitlab', 'ci/cd']
         ];
     }
     
+    /**
+     * Calculate comprehensive AI match score (0-100)
+     */
+    public function calculateMatchScore($candidate, $skills) {
+        $weights = $this->getAdaptiveWeights();
+        
+        $scores = [
+            'education' => $this->calculateEducationScore($candidate) * $weights['education'],
+            'skills' => $this->calculateEnhancedSkillsScore($skills) * $weights['skills'],
+            'experience' => $this->calculateExperienceScore($candidate) * $weights['experience'],
+            'profile' => $this->calculateProfileCompleteness($candidate, $skills) * $weights['profile'],
+            'social' => $this->calculateSocialScore($candidate) * $weights['social'],
+            'freshness' => $this->calculateDataFreshness($candidate) * $weights['freshness']
+        ];
+        
+        $total_score = array_sum($scores);
+        $max_possible = array_sum($weights) * 20; // Normalize to 100
+        
+        $final_score = ($total_score / $max_possible) * 100;
+        
+        return [
+            'score' => round(min(100, max(0, $final_score)), 1),
+            'breakdown' => $scores,
+            'weights' => $weights
+        ];
+    }
+    
+    /**
+     * Adaptive weights based on company type and candidate pool
+     */
+    private function getAdaptiveWeights() {
+        // Base weights - can be adjusted based on company preferences
+        return [
+            'education' => 0.20,    // 20% weight
+            'skills' => 0.25,       // 25% weight  
+            'experience' => 0.25,    // 25% weight
+            'profile' => 0.10,      // 10% weight
+            'social' => 0.10,       // 10% weight
+            'freshness' => 0.10     // 10% weight
+        ];
+    }
+    
+    /**
+     * Enhanced education scoring with multiple factors
+     */
     private function calculateEducationScore($candidate) {
         $score = 0;
         
-        // 1. Education Year Relevance (20 points)
+        // 1. Education Recency (0-8 points)
         if (!empty($candidate['start_year'])) {
             $current_year = date("Y");
             $years_since_education = $current_year - $candidate['start_year'];
             
-            // Improved calculation - more balanced approach
-            if ($years_since_education <= 2) {
-                $score = 20; // Very recent
-            } elseif ($years_since_education <= 5) {
-                $score = 15; // Recent
-            } elseif ($years_since_education <= 10) {
-                $score = 10; // Somewhat recent
+            if ($years_since_education <= 2) $score += 8;
+            elseif ($years_since_education <= 5) $score += 6;
+            elseif ($years_since_education <= 10) $score += 4;
+            else $score += 2;
+        }
+        
+        // 2. Education Level (0-6 points)
+        if (!empty($candidate['course'])) {
+            $course = strtolower($candidate['course']);
+            if (strpos($course, 'master') !== false || strpos($course, 'phd') !== false) {
+                $score += 6;
+            } elseif (strpos($course, 'bachelor') !== false || strpos($course, 'degree') !== false) {
+                $score += 5;
+            } elseif (strpos($course, 'diploma') !== false) {
+                $score += 4;
+            } elseif (strpos($course, 'hnd') !== false) {
+                $score += 3;
             } else {
-                $score = 5;  // Experienced but older education
-            }
-        } else {
-            // If no start year but has education info, give some points
-            if (!empty($candidate['school']) || !empty($candidate['course'])) {
-                $score = 8; // Basic points for having education info
+                $score += 2;
             }
         }
         
-        // 2. Education Level Bonus
-        if (!empty($candidate['course'])) {
-            $course = strtolower($candidate['course']);
-            if (strpos($course, 'master') !== false || 
-                strpos($course, 'phd') !== false ||
-                strpos($course, 'postgraduate') !== false) {
-                $score += 5;
-            } elseif (strpos($course, 'bachelor') !== false || 
-                     strpos($course, 'degree') !== false) {
-                $score += 3;
-            } elseif (strpos($course, 'diploma') !== false || 
-                     strpos($course, 'hnd') !== false) {
+        // 3. Institution Reputation (0-4 points)
+        if (!empty($candidate['school'])) {
+            $school = strtolower($candidate['school']);
+            // Simple heuristic for institution quality
+            if (strlen($candidate['school']) > 10) { // Longer names often indicate established institutions
                 $score += 2;
+            }
+            if (strpos($school, 'university') !== false || strpos($school, 'college') !== false) {
+                $score += 2;
+            }
+        }
+        
+        // 4. Field Relevance Bonus (0-2 points)
+        if (!empty($candidate['course'])) {
+            $tech_keywords = ['computer', 'software', 'engineering', 'technology', 'information', 'data'];
+            $course_lower = strtolower($candidate['course']);
+            foreach ($tech_keywords as $keyword) {
+                if (strpos($course_lower, $keyword) !== false) {
+                    $score += 2;
+                    break;
+                }
             }
         }
         
         return min(20, $score);
     }
     
-    private function calculateSkillsScore($skills) {
+    /**
+     * Advanced skills scoring with ontology and relationships
+     */
+    private function calculateEnhancedSkillsScore($skills) {
         if (empty($skills)) return 0;
         
-        // Different skill categories have different weights
+        $score = 0;
+        
+        // 1. Skill Category Weighting (0-12 points)
         $category_weights = [
-            'IT' => 1.2,
-            'Engineering' => 1.2,
-            'Business Finance' => 1.1,
-            'HND Management' => 1.1,
-            'HND Business Admin' => 1.0,
-            'HND Accountancy' => 1.0,
-            'HND Agriculture' => 0.9,
-            'HND Building Services' => 0.9,
-            'HND English' => 0.8,
-            'HND Food Tech' => 0.9,
-            'HND Mechanical' => 1.0,
-            'HND Quantity Survey' => 0.9,
+            'IT' => 1.3, 'Engineering' => 1.3, 'Business Finance' => 1.1,
+            'HND Management' => 1.1, 'HND Business Admin' => 1.0, 'HND Accountancy' => 1.0,
+            'HND Agriculture' => 0.9, 'HND Building Services' => 0.9, 'HND English' => 0.8,
+            'HND Food Tech' => 0.9, 'HND Mechanical' => 1.0, 'HND Quantity Survey' => 0.9,
             'HND THM' => 0.8
         ];
         
-        $weighted_skill_count = 0;
+        $weighted_count = 0;
         $unique_categories = [];
         
         foreach ($skills as $skill) {
             $category = $skill['category'];
             $weight = $category_weights[$category] ?? 1.0;
-            $weighted_skill_count += $weight;
+            $weighted_count += $weight;
             
             if (!in_array($category, $unique_categories)) {
                 $unique_categories[] = $category;
             }
         }
         
-        // Bonus for diverse skill categories
-        $diversity_bonus = min(5, count($unique_categories) * 0.5);
+        $score += min(12, $weighted_count * 0.8);
         
-        // Normalize to 30 points maximum
-        $base_score = min(25, $weighted_skill_count * 1.5);
+        // 2. Skill Diversity Bonus (0-4 points)
+        $diversity_bonus = min(4, count($unique_categories));
+        $score += $diversity_bonus;
         
-        return min(30, $base_score + $diversity_bonus);
+        // 3. Skill Depth (Advanced skills detection) (0-4 points)
+        $advanced_skills = $this->detectAdvancedSkills($skills);
+        $score += min(4, $advanced_skills * 0.5);
+        
+        return min(25, $score);
     }
     
-    private function calculateExperienceScore($candidate) {
-        $score = 0;
+    /**
+     * Detect advanced/technical skills
+     */
+    private function detectAdvancedSkills($skills) {
+        $advanced_keywords = [
+            'machine learning', 'artificial intelligence', 'deep learning', 'neural network',
+            'kubernetes', 'docker', 'microservices', 'devops', 'ci/cd',
+            'react', 'angular', 'vue', 'nodejs', 'python', 'java', 'spring',
+            'aws', 'azure', 'google cloud', 'cloud computing',
+            'mongodb', 'postgresql', 'redis', 'elasticsearch'
+        ];
         
-        // Job role complexity analysis
-        if (!empty($candidate['job_role'])) {
-            $role = strtolower($candidate['job_role']);
-            
-            // Senior roles get higher scores
-            if (strpos($role, 'senior') !== false || 
-                strpos($role, 'lead') !== false || 
-                strpos($role, 'manager') !== false ||
-                strpos($role, 'director') !== false) {
-                $score += 15;
-            }
-            // Mid-level roles
-            elseif (strpos($role, 'developer') !== false || 
-                   strpos($role, 'engineer') !== false || 
-                   strpos($role, 'analyst') !== false ||
-                   strpos($role, 'specialist') !== false) {
-                $score += 10;
-            }
-            // Entry-level or intern
-            elseif (strpos($role, 'junior') !== false || 
-                   strpos($role, 'intern') !== false ||
-                   strpos($role, 'trainee') !== false) {
-                $score += 5;
-            }
-            else {
-                $score += 8; // Default for other roles
-            }
-            
-            // Bonus for known company
-            if (!empty($candidate['job_company']) && strlen($candidate['job_company']) > 3) {
-                $score += 5;
+        $advanced_count = 0;
+        foreach ($skills as $skill) {
+            $skill_name = strtolower($skill['skill_name']);
+            foreach ($advanced_keywords as $keyword) {
+                if (strpos($skill_name, $keyword) !== false) {
+                    $advanced_count++;
+                    break;
+                }
             }
         }
         
-        // Education level consideration
+        return $advanced_count;
+    }
+    
+    /**
+     * Experience level analysis
+     */
+    private function calculateExperienceScore($candidate) {
+        $score = 0;
+        
+        // 1. Job Role Complexity (0-12 points)
+        if (!empty($candidate['job_role'])) {
+            $role = strtolower($candidate['job_role']);
+            
+            // Leadership/Senior roles
+            if (preg_match('/(senior|lead|principal|manager|director|head|chief)/', $role)) {
+                $score += 12;
+            }
+            // Mid-level professional roles
+            elseif (preg_match('/(developer|engineer|analyst|specialist|consultant|architect)/', $role)) {
+                $score += 9;
+            }
+            // Entry-level roles
+            elseif (preg_match('/(junior|intern|trainee|assistant|entry)/', $role)) {
+                $score += 5;
+            }
+            // Other professional roles
+            else {
+                $score += 7;
+            }
+            
+            // Company reputation bonus
+            if (!empty($candidate['job_company']) && strlen(trim($candidate['job_company'])) > 5) {
+                $score += 3;
+            }
+        }
+        
+        // 2. Education Level Impact on Experience (0-5 points)
         if (!empty($candidate['course'])) {
             $course = strtolower($candidate['course']);
-            if (strpos($course, 'master') !== false || 
-                strpos($course, 'phd') !== false ||
-                strpos($course, 'postgraduate') !== false) {
+            if (strpos($course, 'master') !== false || strpos($course, 'phd') !== false) {
                 $score += 5;
+            } elseif (strpos($course, 'bachelor') !== false) {
+                $score += 3;
+            } elseif (strpos($course, 'diploma') !== false || strpos($course, 'hnd') !== false) {
+                $score += 2;
+            }
+        }
+        
+        // 3. Career Progression Indicator (0-3 points)
+        if (!empty($candidate['job_role']) && !empty($candidate['course'])) {
+            // If role seems advanced compared to education level
+            $role_level = $this->getRoleLevel($candidate['job_role']);
+            $edu_level = $this->getEducationLevel($candidate['course']);
+            
+            if ($role_level > $edu_level) {
+                $score += 3; // Indicates career progression
             }
         }
         
         return min(25, $score);
     }
     
+    private function getRoleLevel($role) {
+        $role_lower = strtolower($role);
+        if (preg_match('/(senior|lead|principal|manager|director|head|chief)/', $role_lower)) return 3;
+        if (preg_match('/(developer|engineer|analyst|specialist|consultant)/', $role_lower)) return 2;
+        return 1;
+    }
+    
+    private function getEducationLevel($course) {
+        $course_lower = strtolower($course);
+        if (strpos($course_lower, 'phd') !== false) return 4;
+        if (strpos($course_lower, 'master') !== false) return 3;
+        if (strpos($course_lower, 'bachelor') !== false) return 2;
+        return 1;
+    }
+    
+    /**
+     * Profile completeness evaluation
+     */
     private function calculateProfileCompleteness($candidate, $skills) {
         $completeness = 0;
         
-        // Profile picture
+        // Profile picture (2 points)
         if (!empty($candidate['profile_picture']) && $candidate['profile_picture'] != 'default.png') {
             $completeness += 2;
         }
         
-        // Education info
+        // Complete education info (4 points)
         if (!empty($candidate['school']) && !empty($candidate['course'])) {
             $completeness += 4;
         } elseif (!empty($candidate['school']) || !empty($candidate['course'])) {
-            $completeness += 2; // Partial points
-        }
-        
-        // Work experience
-        if (!empty($candidate['job_role'])) {
-            $completeness += 4;
-        }
-        
-        // Skills
-        if (!empty($skills)) {
-            $completeness += 3;
-        }
-        
-        // Social links (at least one)
-        $hasSocial = !empty($candidate['linkedin']) || !empty($candidate['github']) || 
-                    !empty($candidate['facebook']) || !empty($candidate['blog']);
-        if ($hasSocial) {
             $completeness += 2;
         }
         
-        return $completeness;
+        // Work experience (4 points)
+        if (!empty($candidate['job_role'])) {
+            $completeness += 4;
+            if (!empty($candidate['job_company'])) {
+                $completeness += 1; // Bonus for company info
+            }
+        }
+        
+        // Skills (3 points)
+        if (!empty($skills)) {
+            $completeness += min(3, count($skills) * 0.3);
+        }
+        
+        // Social presence (2 points)
+        $social_count = 0;
+        if (!empty($candidate['linkedin'])) $social_count++;
+        if (!empty($candidate['github'])) $social_count++;
+        if (!empty($candidate['blog'])) $social_count++;
+        $completeness += min(2, $social_count);
+        
+        return min(15, $completeness);
     }
     
+    /**
+     * Social presence and professional networking
+     */
     private function calculateSocialScore($candidate) {
         $score = 0;
         
-        // LinkedIn is most valuable for professional matching
+        // LinkedIn (most valuable - 4 points)
         if (!empty($candidate['linkedin'])) {
-            // Check if it's a valid URL, not just empty string
-            if (filter_var($candidate['linkedin'], FILTER_VALIDATE_URL) !== false) {
+            if (filter_var($candidate['linkedin'], FILTER_VALIDATE_URL)) {
                 $score += 4;
-            } else if (trim($candidate['linkedin']) !== '') {
-                $score += 2; // Partial points for non-URL but not empty
-            }
-        }
-        
-        // GitHub for technical roles
-        if (!empty($candidate['github'])) {
-            if (filter_var($candidate['github'], FILTER_VALIDATE_URL) !== false) {
-                $score += 3;
-            } else if (trim($candidate['github']) !== '') {
-                $score += 1;
-            }
-        }
-        
-        // Blog/portfolio
-        if (!empty($candidate['blog'])) {
-            if (filter_var($candidate['blog'], FILTER_VALIDATE_URL) !== false) {
+            } elseif (trim($candidate['linkedin']) !== '') {
                 $score += 2;
-            } else if (trim($candidate['blog']) !== '') {
+            }
+        }
+        
+        // GitHub (technical roles - 3 points)
+        if (!empty($candidate['github'])) {
+            if (filter_var($candidate['github'], FILTER_VALIDATE_URL)) {
+                $score += 3;
+            } elseif (trim($candidate['github']) !== '') {
                 $score += 1;
             }
         }
         
-        // Facebook
-        if (!empty($candidate['facebook'])) {
-            if (filter_var($candidate['facebook'], FILTER_VALIDATE_URL) !== false) {
+        // Blog/Portfolio (2 points)
+        if (!empty($candidate['blog'])) {
+            if (filter_var($candidate['blog'], FILTER_VALIDATE_URL)) {
+                $score += 2;
+            } elseif (trim($candidate['blog']) !== '') {
                 $score += 1;
             }
+        }
+        
+        // Facebook (1 point)
+        if (!empty($candidate['facebook']) && filter_var($candidate['facebook'], FILTER_VALIDATE_URL)) {
+            $score += 1;
         }
         
         return min(10, $score);
     }
+    
+    /**
+     * Data freshness and recency
+     */
+    private function calculateDataFreshness($candidate) {
+        $freshness = 0;
+        
+        // Education recency (0-6 points)
+        if (!empty($candidate['start_year'])) {
+            $current_year = date("Y");
+            $years_ago = $current_year - $candidate['start_year'];
+            
+            if ($years_ago <= 2) $freshness += 6;
+            elseif ($years_ago <= 5) $freshness += 4;
+            elseif ($years_ago <= 10) $freshness += 2;
+            else $freshness += 1;
+        } else {
+            $freshness += 2; // Default points if no year
+        }
+        
+        // Profile activity indicator (0-4 points)
+        // Assuming recent profiles are more valuable
+        $freshness += 4; // Base assumption
+        
+        return min(10, $freshness);
+    }
 }
 
-// Initialize matcher
-$matcher = new CandidateMatcher($conn, $user_id);
+// Initialize advanced AI matcher
+$matcher = new AdvancedAICandidateMatcher($conn, $user_id);
 
-// Step 1: Get total number of former students
-$countQuery = "SELECT COUNT(*) as total FROM former_students";
-$stmtCount = $conn->prepare($countQuery);
-$stmtCount->execute();
-$resultCount = $stmtCount->get_result();
-$rowCount = $resultCount->fetch_assoc();
-$totalFormerStudents = $rowCount['total'];
-$stmtCount->close();
-
-// Base query parts - FIXED to ensure we get education data
+// Build query with filters
 $select = "
     SELECT 
         fs.id,
@@ -330,12 +441,12 @@ $select = "
                 ELSE 3                           
             END
         ) AS priority
-    FROM former_students fs
+    FROM students fs
     LEFT JOIN education e ON fs.id = e.user_id
     LEFT JOIN experiences w ON fs.id = w.user_id
 ";
 
-// Filters array for prepared statement binding
+// Filters array
 $where = [];
 $params = [];
 $paramTypes = "";
@@ -347,7 +458,7 @@ if ($education_year) {
     $paramTypes .= "i";
 }
 
-// Filter: Now Status (work, study, intern, free)
+// Filter: Now Status
 if ($now_status) {
     if ($now_status === 'work') {
         $where[] = "w.title IS NOT NULL";
@@ -360,26 +471,44 @@ if ($now_status) {
     }
 }
 
-// Build WHERE clause if any filters
+// Filter: Skill (if provided)
+if ($skill_filter) {
+    // We'll filter after fetching due to complex skill relationships
+    $skill_filter_lower = strtolower($skill_filter);
+}
+
+// Build WHERE clause
 $whereSQL = "";
 if (count($where) > 0) {
     $whereSQL = " WHERE " . implode(" AND ", $where);
 }
 
-// Modified query to ensure we get candidates with data
-if ($totalFormerStudents > 100) {
+// Get total count for optimization
+$countQuery = "SELECT COUNT(*) as total FROM students fs" . $whereSQL;
+$stmtCount = $conn->prepare($countQuery);
+if ($paramTypes && !empty($params)) {
+    $stmtCount->bind_param($paramTypes, ...$params);
+}
+$stmtCount->execute();
+$resultCount = $stmtCount->get_result();
+$rowCount = $resultCount->fetch_assoc();
+$totalCandidates = $rowCount['total'];
+$stmtCount->close();
+
+// Modified query to ensure quality candidates
+if ($totalCandidates > 100) {
     if ($whereSQL) {
         $whereSQL .= " AND (e.school IS NOT NULL OR w.title IS NOT NULL)";
     } else {
         $whereSQL = " WHERE (e.school IS NOT NULL OR w.title IS NOT NULL)";
     }
-    $query = $select . $whereSQL . " GROUP BY fs.id ORDER BY fs.username ASC LIMIT 150";
+    $query = $select . $whereSQL . " GROUP BY fs.id ORDER BY fs.username ASC LIMIT 200";
 } else {
-    $query = $select . $whereSQL . " GROUP BY fs.id ORDER BY priority ASC, fs.username ASC LIMIT 150";
+    $query = $select . $whereSQL . " GROUP BY fs.id ORDER BY priority ASC, fs.username ASC LIMIT 200";
 }
 
 $stmt = $conn->prepare($query);
-if ($paramTypes) {
+if ($paramTypes && !empty($params)) {
     $stmt->bind_param($paramTypes, ...$params);
 }
 $stmt->execute();
@@ -390,33 +519,21 @@ while ($row = $result->fetch_assoc()) {
     // Fetch skills for this person
     $skills_sql = "
         SELECT s.skill_name, s.category
-        FROM former_student_skills fss
+        FROM active_student_skills fss
         JOIN (
             SELECT id, skill_name, 'Business Finance' AS category FROM business_finance_skills
-            UNION ALL
-            SELECT id, skill_name, 'Engineering' AS category FROM engineering_skills
-            UNION ALL
-            SELECT id, skill_name, 'HND Accountancy' AS category FROM hnd_accountancy_skills
-            UNION ALL
-            SELECT id, skill_name, 'HND Agriculture' AS category FROM hnd_agriculture_skills
-            UNION ALL
-            SELECT id, skill_name, 'HND Building Services' AS category FROM hnd_building_services_skills
-            UNION ALL
-            SELECT id, skill_name, 'HND Business Admin' AS category FROM hnd_business_admin_skills
-            UNION ALL
-            SELECT id, skill_name, 'HND English' AS category FROM hnd_english_skills
-            UNION ALL
-            SELECT id, skill_name, 'HND Food Tech' AS category FROM hnd_food_tech_skills
-            UNION ALL
-            SELECT id, skill_name, 'HND Management' AS category FROM hnd_management_skills
-            UNION ALL
-            SELECT id, skill_name, 'HND Mechanical' AS category FROM hnd_mechanical_skills
-            UNION ALL
-            SELECT id, skill_name, 'HND Quantity Survey' AS category FROM hnd_quantity_survey_skills
-            UNION ALL
-            SELECT id, skill_name, 'HND THM' AS category FROM hnd_thm_skills
-            UNION ALL
-            SELECT id, skill_name, 'IT' AS category FROM it_student_skills
+            UNION ALL SELECT id, skill_name, 'Engineering' FROM engineering_skills
+            UNION ALL SELECT id, skill_name, 'HND Accountancy' FROM hnd_accountancy_skills
+            UNION ALL SELECT id, skill_name, 'HND Agriculture' FROM hnd_agriculture_skills
+            UNION ALL SELECT id, skill_name, 'HND Building Services' FROM hnd_building_services_skills
+            UNION ALL SELECT id, skill_name, 'HND Business Admin' FROM hnd_business_admin_skills
+            UNION ALL SELECT id, skill_name, 'HND English' FROM hnd_english_skills
+            UNION ALL SELECT id, skill_name, 'HND Food Tech' FROM hnd_food_tech_skills
+            UNION ALL SELECT id, skill_name, 'HND Management' FROM hnd_management_skills
+            UNION ALL SELECT id, skill_name, 'HND Mechanical' FROM hnd_mechanical_skills
+            UNION ALL SELECT id, skill_name, 'HND Quantity Survey' FROM hnd_quantity_survey_skills
+            UNION ALL SELECT id, skill_name, 'HND THM' FROM hnd_thm_skills
+            UNION ALL SELECT id, skill_name, 'IT' FROM it_student_skills
         ) s ON fss.skill_id = s.id
         WHERE fss.student_id = ?
         ORDER BY s.category, s.skill_name
@@ -428,7 +545,19 @@ while ($row = $result->fetch_assoc()) {
     $row['skills'] = $skills_result->fetch_all(MYSQLI_ASSOC);
     $skills_stmt->close();
     
-    // Calculate AI match score with FIXED functions
+    // Apply skill filter if specified
+    if ($skill_filter && !empty($row['skills'])) {
+        $has_skill = false;
+        foreach ($row['skills'] as $skill) {
+            if (stripos($skill['skill_name'], $skill_filter_lower) !== false) {
+                $has_skill = true;
+                break;
+            }
+        }
+        if (!$has_skill) continue; // Skip if doesn't have required skill
+    }
+    
+    // Calculate AI match score
     $matchResult = $matcher->calculateMatchScore($row, $row['skills']);
     $row['match_score'] = $matchResult['score'];
     $row['score_breakdown'] = $matchResult['breakdown'];
@@ -442,7 +571,7 @@ usort($suggestions, function($a, $b) {
     return $b['match_score'] - $a['match_score'];
 });
 
-// Limit to top 100 candidates after sorting
+// Limit to top candidates after sorting
 $suggestions = array_slice($suggestions, 0, 100);
 ?>
 
@@ -501,7 +630,7 @@ $suggestions = array_slice($suggestions, 0, 100);
             flex: 1;
         }
 
-        /* Skills Section Styles */
+        /* Skills Section */
         .skills-container {
             margin: 15px 0;
         }
@@ -547,7 +676,7 @@ $suggestions = array_slice($suggestions, 0, 100);
             margin-top: 5px;
         }
 
-        /* AI Match Score Styles */
+        /* AI Match Score */
         .match-score {
             position: absolute;
             top: 15px;
@@ -565,29 +694,6 @@ $suggestions = array_slice($suggestions, 0, 100);
         .score-good { background: linear-gradient(135deg, #17a2b8, #0dcaf0); }
         .score-average { background: linear-gradient(135deg, #ffc107, #fd7e14); }
         .score-poor { background: linear-gradient(135deg, #dc3545, #e83e8c); }
-
-        .score-breakdown {
-            background: #f8f9fa;
-            border-radius: 10px;
-            padding: 12px;
-            margin-top: 10px;
-            font-size: 0.8rem;
-        }
-
-        .score-breakdown-item {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 5px;
-        }
-
-        .score-breakdown-label {
-            color: #6c757d;
-        }
-
-        .score-breakdown-value {
-            font-weight: 500;
-            color: #495057;
-        }
 
         .ai-badge {
             background: linear-gradient(135deg, #6f42c1, #e83e8c);
@@ -637,6 +743,37 @@ $suggestions = array_slice($suggestions, 0, 100);
             font-size: 0.8rem;
             opacity: 0.9;
         }
+
+        .score-breakdown {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 12px;
+            margin-top: 10px;
+            font-size: 0.75rem;
+        }
+
+        .breakdown-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 4px;
+        }
+
+        .breakdown-label {
+            color: #6c757d;
+        }
+
+        .breakdown-value {
+            font-weight: 500;
+            color: #495057;
+        }
+
+        .ai-insights {
+            background: linear-gradient(135deg, #e3f2fd, #f3e5f5);
+            border-left: 4px solid #667eea;
+            padding: 10px 15px;
+            margin: 10px 0;
+            border-radius: 0 8px 8px 0;
+        }
     </style>
 </head>
 
@@ -646,22 +783,22 @@ $suggestions = array_slice($suggestions, 0, 100);
 
 <main id="main" class="main">
     <div class="pagetitle">
-        <h1>AI-Powered Candidate Matching <span class="ai-badge">AI Powered</span></h1>
+        <h1>AI-Powered Candidate Matching <span class="ai-badge">Advanced AI</span></h1>
         <nav>
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="index.php">Home</a></li>
-                <li class="breadcrumb-item active">Smart Connections</li>
+                <li class="breadcrumb-item active">Smart Recruitment</li>
             </ol>
         </nav>
     </div>
 
     <section class="section">
-        <!-- Filter Section -->
+        <!-- Advanced Filter Section -->
         <div class="card mb-4">
             <div class="card-body">
-                <h5 class="card-title">Smart Candidate Filtering</h5>
+                <h5 class="card-title"><i class="fas fa-robot me-2"></i>AI Candidate Filtering</h5>
                 <form method="GET" class="row g-3">
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <label for="education_year" class="form-label">Education Year</label>
                         <select name="education_year" id="education_year" class="form-select">
                             <option value="">All Years</option>
@@ -675,7 +812,7 @@ $suggestions = array_slice($suggestions, 0, 100);
                         </select>
                     </div>
 
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <label for="now_status" class="form-label">Current Status</label>
                         <select name="now_status" id="now_status" class="form-select">
                             <option value="">All Status</option>
@@ -686,17 +823,23 @@ $suggestions = array_slice($suggestions, 0, 100);
                         </select>
                     </div>
 
-                    <div class="col-md-4 d-flex align-items-end">
+                    <div class="col-md-3">
+                        <label for="skill_filter" class="form-label">Skill Filter</label>
+                        <input type="text" name="skill_filter" id="skill_filter" class="form-control" 
+                               placeholder="e.g., javascript, python" value="<?= htmlspecialchars($skill_filter) ?>">
+                    </div>
+
+                    <div class="col-md-3 d-flex align-items-end">
                         <button type="submit" class="btn btn-primary w-100">
-                            <i class="fas fa-robot me-2"></i>AI Match Candidates
+                            <i class="fas fa-filter me-2"></i>AI Match
                         </button>
                     </div>
                 </form>
 
                 <!-- Active Filters Display -->
-                <?php if ($education_year || $now_status): ?>
+                <?php if ($education_year || $now_status || $skill_filter): ?>
                     <div class="mt-3">
-                        <h6 class="text-muted mb-2">Active Filters:</h6>
+                        <h6 class="text-muted mb-2">Active AI Filters:</h6>
                         <?php if ($education_year): ?>
                             <span class="filter-badge">
                                 <i class="fas fa-graduation-cap"></i>
@@ -709,6 +852,15 @@ $suggestions = array_slice($suggestions, 0, 100);
                                 Status: <?= ucfirst($now_status) ?>
                             </span>
                         <?php endif; ?>
+                        <?php if ($skill_filter): ?>
+                            <span class="filter-badge">
+                                <i class="fas fa-code"></i>
+                                Skill: <?= htmlspecialchars($skill_filter) ?>
+                            </span>
+                        <?php endif; ?>
+                        <a href="?" class="btn btn-sm btn-outline-secondary ms-2">
+                            <i class="fas fa-times me-1"></i>Clear All
+                        </a>
                     </div>
                 <?php endif; ?>
             </div>
@@ -719,12 +871,14 @@ $suggestions = array_slice($suggestions, 0, 100);
         <div class="results-header">
             <div class="row align-items-center">
                 <div class="col-md-8">
-                    <h4 class="mb-1">AI-Matched <?= count($suggestions) ?> Candidates</h4>
-                    <p class="mb-0 match-quality">Sorted by AI Match Score • Best matches first</p>
+                    <h4 class="mb-1">🤖 AI-Matched <?= count($suggestions) ?> Candidates</h4>
+                    <p class="mb-0 match-quality">
+                        Sorted by AI Match Score • Multi-factor analysis • Smart ranking
+                    </p>
                 </div>
                 <div class="col-md-4 text-end">
                     <div class="bg-white text-dark rounded-pill px-3 py-2 d-inline-block">
-                        <small><strong>Match Quality:</strong> 
+                        <small><strong>AI Scoring:</strong> 
                             <span class="text-success">Excellent (80%+)</span> • 
                             <span class="text-info">Good (60-79%)</span> • 
                             <span class="text-warning">Average (40-59%)</span>
@@ -735,11 +889,10 @@ $suggestions = array_slice($suggestions, 0, 100);
         </div>
         <?php endif; ?>
 
-        <!-- Results Section -->
+        <!-- AI-Powered Results -->
         <div class="row">
             <?php if (count($suggestions) > 0): ?>
                 <?php foreach ($suggestions as $person): 
-                    // Determine score color class
                     $score_class = 'score-excellent';
                     if ($person['match_score'] < 80) $score_class = 'score-good';
                     if ($person['match_score'] < 60) $score_class = 'score-average';
@@ -748,22 +901,22 @@ $suggestions = array_slice($suggestions, 0, 100);
                     <div class="col-md-6 col-lg-4 mb-4">
                         <div class="modern-card">
                             <!-- AI Match Score -->
-                            <div class="match-score <?= $score_class ?>">
+                            <div class="match-score <?= $score_class ?>" title="AI Match Score">
                                 <?= $person['match_score'] ?>%
                             </div>
 
                             <!-- Priority Badge -->
                             <?php if ($person['priority'] == 1): ?>
-                                <span class="badge bg-success priority-badge">Work Experience</span>
+                                <span class="badge bg-success priority-badge">💼 Work Experience</span>
                             <?php elseif ($person['priority'] == 2): ?>
-                                <span class="badge bg-info priority-badge">Education</span>
+                                <span class="badge bg-info priority-badge">🎓 Education</span>
                             <?php else: ?>
-                                <span class="badge bg-secondary priority-badge">Basic Profile</span>
+                                <span class="badge bg-secondary priority-badge">👤 Basic Profile</span>
                             <?php endif; ?>
 
                             <!-- Candidate Header -->
                             <div class="d-flex align-items-center mb-3">
-                                <img src="../oddstudents/<?= htmlspecialchars($person['profile_picture']) ?>" 
+                                <img src="../<?= htmlspecialchars($person['profile_picture']) ?>" 
                                      alt="Profile" 
                                      class="profile-img me-3"
                                      onerror="this.src='../uploads/profile_pictures/default.png'">
@@ -773,40 +926,53 @@ $suggestions = array_slice($suggestions, 0, 100);
                                     <!-- Study Year -->
                                     <?php if (!empty($person['study_year'])): ?>
                                         <div class="mt-1">
-                                            <span class="study-year-badge">Batch: <?= htmlspecialchars($person['study_year']) ?></span>
+                                            <span class="study-year-badge">🎯 Batch: <?= htmlspecialchars($person['study_year']) ?></span>
                                         </div>
                                     <?php endif; ?>
                                     
-                                    <a href="../admin/former-student-profile.php?former_student_id=<?= $person['id']; ?>" 
+                                    <a href="student-profile.php?student_id=<?= $person['id']; ?>" 
                                        class="btn btn-sm btn-outline-primary mt-2" target="_blank">
-                                        View Full Profile
+                                        <i class="fas fa-external-link-alt me-1"></i>View Profile
                                     </a>
                                 </div>
                             </div>
 
-                            <!-- Score Breakdown -->
-                            <!--div class="score-breakdown">
-                                <div class="score-breakdown-item">
-                                    <span class="score-breakdown-label">Education Match:</span>
-                                    <span class="score-breakdown-value"><?= $person['score_breakdown']['education'] ?> pts</span>
+                            <!-- AI Score Breakdown -->
+                            <div class="score-breakdown">
+                                <div class="breakdown-item">
+                                    <span class="breakdown-label">Education:</span>
+                                    <span class="breakdown-value"><?= round($person['score_breakdown']['education'], 1) ?> pts</span>
                                 </div>
-                                <div class="score-breakdown-item">
-                                    <span class="score-breakdown-label">Skills Match:</span>
-                                    <span class="score-breakdown-value"><?= $person['score_breakdown']['skills'] ?> pts</span>
+                                <div class="breakdown-item">
+                                    <span class="breakdown-label">Skills:</span>
+                                    <span class="breakdown-value"><?= round($person['score_breakdown']['skills'], 1) ?> pts</span>
                                 </div>
-                                <div class="score-breakdown-item">
-                                    <span class="score-breakdown-label">Experience Level:</span>
-                                    <span class="score-breakdown-value"><?= $person['score_breakdown']['experience'] ?> pts</span>
+                                <div class="breakdown-item">
+                                    <span class="breakdown-label">Experience:</span>
+                                    <span class="breakdown-value"><?= round($person['score_breakdown']['experience'], 1) ?> pts</span>
                                 </div>
-                                <div class="score-breakdown-item">
-                                    <span class="score-breakdown-label">Profile Quality:</span>
-                                    <span class="score-breakdown-value"><?= $person['score_breakdown']['profile'] ?> pts</span>
+                                <div class="breakdown-item">
+                                    <span class="breakdown-label">Profile:</span>
+                                    <span class="breakdown-value"><?= round($person['score_breakdown']['profile'], 1) ?> pts</span>
                                 </div>
-                                <div class="score-breakdown-item">
-                                    <span class="score-breakdown-label">Social Presence:</span>
-                                    <span class="score-breakdown-value"><?= $person['score_breakdown']['social'] ?> pts</span>
+                                <div class="breakdown-item">
+                                    <span class="breakdown-label">Social:</span>
+                                    <span class="breakdown-value"><?= round($person['score_breakdown']['social'], 1) ?> pts</span>
                                 </div>
-                            </div-->
+                            </div>
+
+                            <!-- AI Insights -->
+                            <?php if ($person['match_score'] >= 80): ?>
+                                <div class="ai-insights">
+                                    <small><i class="fas fa-lightbulb me-1 text-warning"></i> 
+                                    <strong>AI Insight:</strong> Excellent match! Strong technical skills and relevant experience.</small>
+                                </div>
+                            <?php elseif ($person['match_score'] >= 60): ?>
+                                <div class="ai-insights">
+                                    <small><i class="fas fa-lightbulb me-1 text-info"></i> 
+                                    <strong>AI Insight:</strong> Good potential candidate with solid background.</small>
+                                </div>
+                            <?php endif; ?>
 
                             <!-- Skills Display -->
                             <?php if (!empty($person['skills'])): ?>
@@ -816,15 +982,14 @@ $suggestions = array_slice($suggestions, 0, 100);
                                     </div>
                                     <div class="skills-list">
                                         <?php 
-                                        // Show only first 5 skills
-                                        $displaySkills = array_slice($person['skills'], 0, 5);
+                                        $displaySkills = array_slice($person['skills'], 0, 6);
                                         foreach ($displaySkills as $skill): ?>
                                             <span class="skill-tag"><?= htmlspecialchars($skill['skill_name']) ?></span>
                                         <?php endforeach; ?>
                                     </div>
-                                    <?php if (count($person['skills']) > 5): ?>
+                                    <?php if (count($person['skills']) > 6): ?>
                                         <div class="more-skills-text">
-                                            +<?= count($person['skills']) - 5 ?> more skills in profile
+                                            +<?= count($person['skills']) - 6 ?> more skills in profile
                                         </div>
                                     <?php endif; ?>
                                 </div>
@@ -872,11 +1037,6 @@ $suggestions = array_slice($suggestions, 0, 100);
                                         <i class="fab fa-github" style="color:#171515;"></i>
                                     </a>
                                 <?php endif; ?>
-                                <?php if (!empty($person['facebook'])): ?>
-                                    <a href="<?= htmlspecialchars($person['facebook']) ?>" target="_blank" title="Facebook">
-                                        <i class="fab fa-facebook" style="color: #1877F2;"></i>
-                                    </a>
-                                <?php endif; ?>
                                 <?php if (!empty($person['blog'])): ?>
                                     <a href="<?= htmlspecialchars($person['blog']) ?>" target="_blank" title="Blog">
                                         <i class="fas fa-blog" style="color: #fc4f08;"></i>
@@ -891,7 +1051,7 @@ $suggestions = array_slice($suggestions, 0, 100);
                     <div class="no-results">
                         <i class="fas fa-robot"></i>
                         <h4>No AI-matched candidates found</h4>
-                        <p class="text-muted mb-4">Try adjusting your search filters to find better matches.</p>
+                        <p class="text-muted mb-4">Try adjusting your search filters or broaden your criteria.</p>
                         <a href="?" class="btn btn-primary btn-lg">
                             <i class="fas fa-redo me-2"></i>Reset All Filters
                         </a>
@@ -904,6 +1064,36 @@ $suggestions = array_slice($suggestions, 0, 100);
 
 <?php include_once("../includes/footer.php"); ?>
 <?php include_once("../includes/js-links-inc.php"); ?>
+
+<script>
+// Add some interactivity
+document.addEventListener('DOMContentLoaded', function() {
+    // Add smooth scrolling to results
+    const cards = document.querySelectorAll('.modern-card');
+    cards.forEach(card => {
+        card.addEventListener('click', function(e) {
+            if (e.target.tagName === 'A') return;
+            const profileLink = this.querySelector('a[href*="dent-profile"]');
+            if (profileLink) {
+                window.open(profileLink.href, '_blank');
+            }
+        });
+    });
+
+    // Add search suggestions for skills
+    const skillInput = document.getElementById('skill_filter');
+    if (skillInput) {
+        skillInput.addEventListener('focus', function() {
+            this.placeholder = 'e.g., javascript, react, python, machine learning';
+        });
+        
+        skillInput.addEventListener('blur', function() {
+            this.placeholder = 'e.g., javascript, python';
+        });
+    }
+});
+</script>
+
 <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 </body>
 </html>

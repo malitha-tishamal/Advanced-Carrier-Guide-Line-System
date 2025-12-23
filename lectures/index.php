@@ -129,10 +129,11 @@ ul.list-unstyled li i {
 <body>
     <main id="main" class="main">
         <div class="pagetitle">
-            <h1>IT Department Lectures Pannel</h1>
+            <h1>Lecture Dashbord</h1>
             <nav>
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="">Home</a></li>
+                    <li class="breadcrumb-item"><a href="">Dashbord</a></li>
                 </ol>
             </nav>
         </div>
@@ -145,61 +146,16 @@ ul.list-unstyled li i {
                             <?php include_once("../includes/header.php") ?>
                             <?php include_once("../includes/lectures-sidebar.php") ?>
 
-                            <div class="container mt-4">
-                                <div class="row">
-                                    <?php foreach ($lecturers as $lecturer): ?>
-                                        <div class="col-md-4">
-                                            <div class="card lecturer-card shadow-lg rounded">
-                                                <div>
-                                                    <div class=" text-center mt-3 mb-1">
-                                                    <img src="<?php echo $lecturer['profile_picture']; ?>" class="card-img-top " alt="Profile Picture" onerror="this.onerror=null;this.src='uploads/profile_pictures/default.jpg';">
-                                                </div>
-                                                <div class="card-body" style="min-height: 300px;">
-                                                    <h4 class="text-primary text-center "><?php echo $lecturer['username']; ?></h4>
-                                                    <div class="card-text  mt-1"><strong>Email:</strong> <?php echo $lecturer['email']; ?></div>
-                                                    <div class="card-text mt-1"><strong>Mobile:</strong> <?php echo $lecturer['mobile']; ?></div>
-
-                                                    <!-- Social Links -->
-                                                    <div class="social-links">
-                                                        <strong>Social Links:</strong><br>
-                                                        <?php if ($lecturer['linkedin']) { echo '<a href="' . $lecturer['linkedin'] . '" target="_blank" class="social-icon linkedin"><span style="color: #0077B5;"><i class="fab fa-linkedin"></i></a></span>'; } ?>
-                                                        <?php if ($lecturer['blog']) { echo '<a href="' . $lecturer['blog'] . '" target="_blank" class="social-icon blog"><span style="color: #fc4f08;"><i class="fas fa-blog"></i></a></span>'; } ?>
-                                                        <?php if ($lecturer['github']) { echo '<a href="' . $lecturer['github'] . '" target="_blank" class="social-icon github"><span style="color:  #171515;"><i class="fab fa-github"></i></a></span>'; } ?>
-                                                        <?php if ($lecturer['facebook']) { echo '<a href="' . $lecturer['facebook'] . '" target="_blank" class="social-icon facebook"><span style="color: #1877F2;"><i class="fab fa-facebook"></i></a></span>'; } ?>
-                                                    </div>
-
-                                                    <div class="mt-1">
-                                                        <strong>Subjects:</strong>
-                                                        <ul class="list-unstyled">
-                                                            <?php
-                                                            $stmt = $conn->prepare($subjects_query);
-                                                            $stmt->bind_param("i", $lecturer['id']);
-                                                            $stmt->execute();
-                                                            $subjects_result = $stmt->get_result();
-                                                            while ($subject = $subjects_result->fetch_assoc()) {
-                                                                echo '<li><i class="fas fa-book mr-2"></i>' .'[ ' . $subject['code'].' ] ' .  $subject['name'] .'</li>';
-                                                            }
-                                                            $stmt->close();
-                                                            ?>
-                                                        </ul>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            </div>
-                                        </div>
-                                    <?php endforeach; ?>
-                                </div>
-                            </div>
-
    
                         <section class="section">
                             <div class="row">
                                 <div class="col-lg-12">
                                     <div class="card">
+                                        <div class="card-title">Recent Login Activities</div>
                                         <div class="card-body"> 
                                             <!-- Recently Logged-In Lecturers -->
                                             <?php
-                                            $recent_lecturers_query = "SELECT * FROM lectures ORDER BY last_login DESC LIMIT 5";
+                                            $recent_lecturers_query = "SELECT * FROM lectures ORDER BY last_login DESC LIMIT 20";
                                             $recent_lecturers_result = $conn->query($recent_lecturers_query);
                                             ?>
                                             <div class="container mt-2">
@@ -212,7 +168,7 @@ ul.list-unstyled li i {
                                                                     <img src="<?php echo $lecturer['profile_picture']; ?>" 
                                                                          alt="Profile Picture"
                                                                          class="rounded-circle me-2"
-                                                                         style="width: 50px; height: 50px; object-fit: cover;"
+                                                                         style="width: 80px; height: 80px; object-fit: cover;"
                                                                          onerror="this.onerror=null;this.src='uploads/profile_pictures/default.jpg';">
                                                                     <div>
                                                                         <h6 class="mb-0"><?php echo $lecturer['username']; ?></h6>
@@ -235,7 +191,7 @@ ul.list-unstyled li i {
 
                                             <!-- Recently Logged-In Students -->
                                             <?php 
-                                            $recent_students_query = "SELECT * FROM students ORDER BY last_login DESC LIMIT 5";
+                                            $recent_students_query = "SELECT * FROM students ORDER BY last_login DESC LIMIT 25";
                                             $recent_students_result = $conn->query($recent_students_query);
                                             ?>
                                             <div class="container mt-2">
@@ -248,7 +204,7 @@ ul.list-unstyled li i {
                                                                     <img src="../<?php echo $student['profile_picture']; ?>" 
                                                                          alt="Profile Picture"
                                                                          class="rounded-circle me-2"
-                                                                         style="width: 50px; height: 50px; object-fit: cover;"
+                                                                         style="width: 80px; height: 80px; object-fit: cover;"
                                                                          onerror="this.onerror=null;this.src='../uploads/profile_pictures/default.png';">
                                                                     <div>
                                                                         <h6 class="mb-0"><?php echo $student['username']; ?></h6>
@@ -271,7 +227,7 @@ ul.list-unstyled li i {
 
                                             <!-- Recently Logged-In Former Students -->
                                             <?php
-                                            $recent_former_students_query = "SELECT * FROM former_students ORDER BY last_login DESC LIMIT 5";
+                                            $recent_former_students_query = "SELECT * FROM former_students ORDER BY last_login DESC LIMIT 25";
                                             $recent_former_students_result = $conn->query($recent_former_students_query);
                                             ?>
                                             <div class="container mt-2">
@@ -284,7 +240,7 @@ ul.list-unstyled li i {
                                                                     <img src="../oddstudents/<?php echo $former_student['profile_picture']; ?>" 
                                                                          alt="Profile Picture"
                                                                          class="rounded-circle me-2"
-                                                                         style="width: 50px; height: 50px; object-fit: cover;"
+                                                                         style="width: 80px; height: 80px; object-fit: cover;"
                                                                          onerror="this.onerror=null;this.src='../oddstudents/uploads/profile_pictures/default.png';">
                                                                     <div>
                                                                         <h6 class="mb-0"><?php echo $former_student['username']; ?></h6>

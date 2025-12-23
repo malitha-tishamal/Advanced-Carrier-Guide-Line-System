@@ -1,18 +1,25 @@
 <?php
+session_start();
 require_once "../includes/db-conn.php";
+
+// Function to set session message and redirect
+function redirectWithMessage($message, $type = 'success') {
+    $_SESSION['flash_message'] = $message;
+    $_SESSION['flash_type'] = $type;
+    header("Location: manage-former-students-edu.php");
+    exit();
+}
 
 // Approve user
 if (isset($_GET['approve_id'])) {
-    $user_id = $_GET['approve_id'];
+    $user_id = intval($_GET['approve_id']);
     $sql = "UPDATE former_students SET status = 'approved' WHERE id = ?";
-    
     if ($stmt = $conn->prepare($sql)) {
         $stmt->bind_param("i", $user_id);
-        
         if ($stmt->execute()) {
-            header("Location: manage-former-students-edu.php?message=User approved successfully!&msg_type=success");
+            redirectWithMessage("User approved successfully!");
         } else {
-            header("Location: manage-former-students-edu.php?message=Error approving user.&msg_type=danger");
+            redirectWithMessage("Error approving user.", "danger");
         }
         $stmt->close();
     }
@@ -20,16 +27,14 @@ if (isset($_GET['approve_id'])) {
 
 // Disable user
 if (isset($_GET['disable_id'])) {
-    $user_id = $_GET['disable_id'];
+    $user_id = intval($_GET['disable_id']);
     $sql = "UPDATE former_students SET status = 'disabled' WHERE id = ?";
-    
     if ($stmt = $conn->prepare($sql)) {
         $stmt->bind_param("i", $user_id);
-        
         if ($stmt->execute()) {
-            header("Location: manage-former-students-edu.php?message=User disabled successfully!&msg_type=success");
+            redirectWithMessage("User disabled successfully!");
         } else {
-            header("Location: manage-former-students-edu.php?message=Error disabling user.&msg_type=danger");
+            redirectWithMessage("Error disabling user.", "danger");
         }
         $stmt->close();
     }
@@ -37,46 +42,34 @@ if (isset($_GET['disable_id'])) {
 
 // Delete user
 if (isset($_GET['delete_id'])) {
-    $user_id = $_GET['delete_id'];
+    $user_id = intval($_GET['delete_id']);
     $sql = "DELETE FROM former_students WHERE id = ?";
-    
     if ($stmt = $conn->prepare($sql)) {
         $stmt->bind_param("i", $user_id);
-        
         if ($stmt->execute()) {
-            header("Location: manage-former-students-edu.php?message=User deleted successfully!&msg_type=success");
+            redirectWithMessage("User deleted successfully!");
         } else {
-            header("Location: manage-former-students-edu.php?message=Error deleting user.&msg_type=danger");
+            redirectWithMessage("Error deleting user.", "danger");
         }
         $stmt->close();
     }
 }
 
-
-
-// Check for the appropriate action (approve, disable, delete)
-if (isset($_GET['approve_id'])) {
-    $userId = $_GET['approve_id'];
-    // Your code to approve the user...
-    // After success, redirect back to the previous page with a refresh
-    header("Location: manage-former-students-edu.php");
-    exit();
+// Reset user password
+if (isset($_GET['reset_id'])) {
+    $user_id = intval($_GET['reset_id']);
+    $new_password = password_hash('00000000', PASSWORD_DEFAULT);
+    $sql = "UPDATE former_students SET password = ? WHERE id = ?";
+    if ($stmt = $conn->prepare($sql)) {
+        $stmt->bind_param("si", $new_password, $user_id);
+        if ($stmt->execute()) {
+            redirectWithMessage("User password reset successfully!");
+        } else {
+            redirectWithMessage("Error resetting password.", "danger");
+        }
+        $stmt->close();
+    }
 }
 
-if (isset($_GET['disable_id'])) {
-    $userId = $_GET['disable_id'];
-    // Your code to disable the user...
-    // After success, redirect back to the previous page with a refresh
-    header("Location: manage-former-students-edu.php");
-    exit();
-}
-
-if (isset($_GET['delete_id'])) {
-    $userId = $_GET['delete_id'];
-    // Your code to delete the user...
-    // After success, redirect back to the previous page with a refresh
-    header("Location: manage-former-students-edu.php");
-    exit();
-}
 $conn->close();
 ?>
