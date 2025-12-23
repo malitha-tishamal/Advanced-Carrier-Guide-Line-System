@@ -937,7 +937,7 @@ $suggestions = array_slice($suggestions, 0, 100);
                                 </div>
                             </div>
 
-                            <!-- AI Score Breakdown -->
+                            <!-- AI Score Breakdown>
                             <div class="score-breakdown">
                                 <div class="breakdown-item">
                                     <span class="breakdown-label">Education:</span>

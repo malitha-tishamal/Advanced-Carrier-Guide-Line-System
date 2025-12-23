@@ -937,7 +937,7 @@ $suggestions = array_slice($suggestions, 0, 100);
                                 </div>
                             </div>
 
-                            <!-- AI Score Breakdown -->
+                            <!-- AI Score Breakdown>
                             <div class="score-breakdown">
                                 <div class="breakdown-item">
                                     <span class="breakdown-label">Education:</span>
@@ -959,7 +959,7 @@ $suggestions = array_slice($suggestions, 0, 100);
                                     <span class="breakdown-label">Social:</span>
                                     <span class="breakdown-value"><?= round($person['score_breakdown']['social'], 1) ?> pts</span>
                                 </div>
-                            </div>
+                            </div-->
 
                             <!-- AI Insights -->
                             <?php if ($person['match_score'] >= 80): ?>

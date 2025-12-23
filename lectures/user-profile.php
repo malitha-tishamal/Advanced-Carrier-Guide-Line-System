@@ -122,7 +122,7 @@ $stmt->close();
                                         <div class="col-lg-9 col-md-8">
                                             <?php 
                                             // Display profile picture with timestamp to force refresh
-                                            echo "<img src='$profilePic?" . time() . "' alt='Profile Picture' class='img-thumbnail mb-1' style='width: 100px; height: 100px; border-radius:50%;'>";
+                                            echo "<img src='$profilePic?" . time() . "' alt='Profile Picture' class='img-thumbnail mb-1' style='width: 200px; height: 200px; border-radius:50%;'>";
                                             ?>
                                             
                                             <form action="update-profile-picture.php" method="POST" enctype="multipart/form-data">
