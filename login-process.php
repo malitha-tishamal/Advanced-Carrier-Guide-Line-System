@@ -2,7 +2,7 @@
 session_start();
 require_once 'includes/db-conn.php';
 
-// Set timezone to Sri Lanka
+// Timezone (Sri Lanka)
 date_default_timezone_set('Asia/Colombo');
 $conn->query("SET time_zone = '+05:30'");
 
@@ -13,115 +13,100 @@ if (!isset($_SESSION['login_attempts'])) {
     $_SESSION['last_attempt_time'] = time();
 }
 
-// Lockout durations based on failed attempts
+// Lockout durations (minutes)
 $lockout_durations = [5 * 60, 10 * 60, 20 * 60, 60 * 60];
 
-// Check if locked out
+// Check lockout
 if ($_SESSION['login_attempts'] >= 3) {
     $stage = $_SESSION['lockout_stage'];
     $timeout = $lockout_durations[$stage] ?? end($lockout_durations);
     $remaining = ($_SESSION['last_attempt_time'] + $timeout) - time();
 
     if ($remaining > 0) {
-        $_SESSION['error_message'] = "Too many failed attempts. Try again in " . ceil($remaining / 60) . " minute(s).";
-        $_SESSION['lockout_remaining'] = $remaining;
+        $_SESSION['error_message'] =
+            "Too many failed attempts. Try again in " . ceil($remaining / 60) . " minute(s).";
         header("Location: index.php");
         exit();
     } else {
         $_SESSION['login_attempts'] = 0;
-        $_SESSION['lockout_stage'] += 1;
+        $_SESSION['lockout_stage']++;
     }
 }
 
+// Login submit
 if (isset($_POST['submit'])) {
-    $email = $_POST['email'];
+
+    $email = trim($_POST['email']);
     $password = $_POST['password'];
 
-    // ✅ Order changed: former_students comes before students
+    // Search order (former_students before students)
     $tables = ['admins', 'lectures', 'former_students', 'students', 'companies'];
 
     foreach ($tables as $table) {
-        $sql = "SELECT * FROM $table WHERE email = ?";
-        if ($stmt = $conn->prepare($sql)) {
-            $stmt->bind_param("s", $email);
-            $stmt->execute();
-            $result = $stmt->get_result();
-            $user = $result->fetch_assoc();
 
-            if ($user && password_verify($password, $user['password'])) {
-                // Reset login attempts
-                $_SESSION['login_attempts'] = 0;
-                $_SESSION['lockout_stage'] = 0;
+        $sql = "SELECT * FROM $table WHERE email = ? LIMIT 1";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $user = $result->fetch_assoc();
 
-                $current_time = date("Y-m-d H:i:s");
+        // Password verified
+        if ($user && password_verify($password, $user['password'])) {
 
-                // Role-specific login
-                if ($table == 'admins' && $user['status'] == 'approved') {
-                    $_SESSION['admin_id'] = $user['id'];
-                    $_SESSION['success_message'] = "Welcome Admin!";
-                    $update = $conn->prepare("UPDATE admins SET last_login = ? WHERE id = ?");
-                    $update->bind_param("si", $current_time, $user['id']);
-                    $update->execute();
-                    header("Location: admin/index.php");
-                    exit();
+            // Reset attempts
+            $_SESSION['login_attempts'] = 0;
+            $_SESSION['lockout_stage'] = 0;
 
-                } elseif ($table == 'lectures' && $user['status'] == 'approved') {
-                    $_SESSION['lecturer_id'] = $user['id'];
-                    $_SESSION['success_message'] = "Welcome Lecturer!";
-                    $update = $conn->prepare("UPDATE lectures SET last_login = ? WHERE id = ?");
-                    $update->bind_param("si", $current_time, $user['id']);
-                    $update->execute();
-                    header("Location: lectures/index.php");
-                    exit();
-
-                } elseif ($table == 'former_students' && $user['status'] == 'approved') {
-                    $_SESSION['former_student_id'] = $user['id'];
-                    $_SESSION['success_message'] = "Welcome Former Student!";
-                    $update = $conn->prepare("UPDATE former_students SET last_login = ? WHERE id = ?");
-                    $update->bind_param("si", $current_time, $user['id']);
-                    $update->execute();
-                    header("Location: oddstudents/index.php");
-                    exit();
-
-                } elseif ($table == 'students' && $user['status'] == 'approved') {
-                    $_SESSION['student_id'] = $user['id'];
-                    $_SESSION['success_message'] = "Welcome Student!";
-                    $update = $conn->prepare("UPDATE students SET last_login = ? WHERE id = ?");
-                    $update->bind_param("si", $current_time, $user['id']);
-                    $update->execute();
-                    header("Location: user-profile.php");
-                    exit();
-
-                } elseif ($table == 'companies' && $user['status'] == 'approved') {
-                    $_SESSION['company_id'] = $user['id'];
-                    $_SESSION['success_message'] = "Welcome Company!";
-                    $update = $conn->prepare("UPDATE companies SET last_login = ? WHERE id = ?");
-                    $update->bind_param("si", $current_time, $user['id']);
-                    $update->execute();
-                    header("Location: companies/index.php");
-                    exit();
-
-                } elseif ($table == 'companies') {
-                    $_SESSION['error_message'] = "Your company account has not been approved yet.";
-                    header("Location: index.php");
-                    exit();
-                } else {
-                    $_SESSION['error_message'] = "Your $table account has not been approved yet.";
-                    header("Location: index.php");
-                    exit();
-                }
+            // ✅ STATUS CHECK (approved OR active)
+            if (!in_array($user['status'], ['approved', 'active'])) {
+                $_SESSION['error_message'] = "Your account is not active or not approved yet.";
+                header("Location: index.php");
+                exit();
             }
+
+            $current_time = date("Y-m-d H:i:s");
+
+            // ---------- ROLE HANDLING ----------
+            if ($table === 'admins') {
+                $_SESSION['admin_id'] = $user['id'];
+                $redirect = "admin/index.php";
+
+            } elseif ($table === 'lectures') {
+                $_SESSION['lecturer_id'] = $user['id'];
+                $redirect = "lectures/index.php";
+
+            } elseif ($table === 'former_students') {
+                $_SESSION['former_student_id'] = $user['id'];
+                $redirect = "oddstudents/index.php";
+
+            } elseif ($table === 'students') {
+                $_SESSION['student_id'] = $user['id'];
+                $redirect = "user-profile.php";
+
+            } elseif ($table === 'companies') {
+                $_SESSION['company_id'] = $user['id'];
+                $redirect = "companies/index.php";
+            }
+
+            // Update last login
+            $update = $conn->prepare("UPDATE $table SET last_login = ? WHERE id = ?");
+            $update->bind_param("si", $current_time, $user['id']);
+            $update->execute();
+
+            $_SESSION['success_message'] = "Login successful!";
+            header("Location: $redirect");
+            exit();
         }
     }
 
-    // Failed login
-    $_SESSION['login_attempts'] += 1;
+    // ❌ Failed login
+    $_SESSION['login_attempts']++;
     $_SESSION['last_attempt_time'] = time();
     $_SESSION['error_message'] = "Invalid email or password.";
 
-    // Increase lockout stage every 3 attempts
-    if ($_SESSION['login_attempts'] % 3 == 0) {
-        $_SESSION['lockout_stage'] += 1;
+    if ($_SESSION['login_attempts'] % 3 === 0) {
+        $_SESSION['lockout_stage']++;
     }
 
     header("Location: index.php");
