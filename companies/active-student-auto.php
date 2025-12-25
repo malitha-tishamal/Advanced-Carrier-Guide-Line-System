@@ -21,7 +21,7 @@ $result = $stmt->get_result();
 $user = $result->fetch_assoc();
 $stmt->close();
 
-$company_name = $_SESSION['company_name'];
+//$company_name = $_SESSION['company_name'];
 
 // Get filter values from GET (sanitize)
 $education_year = isset($_GET['education_year']) ? intval($_GET['education_year']) : '';

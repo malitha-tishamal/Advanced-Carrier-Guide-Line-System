@@ -2,8 +2,8 @@
 <aside id="sidebar" class="sidebar">
     <ul class="sidebar-nav" id="sidebar-nav">
 
-        <!--li class="nav-item">
-            <a class="nav-link" href="pages-home.php">
+        <li class="nav-item">
+            <a class="nav-link" href="pages-youmay-know.php">
                 <i class="bi bi-house-door"></i> <span>Home</span>
             </a>
         </li>

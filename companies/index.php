@@ -21,7 +21,7 @@ $result = $stmt->get_result();
 $user = $result->fetch_assoc();
 $stmt->close();
 
-$company_name = $_SESSION['company_name'];
+//$company_name = $_SESSION['company_name'];
 
 // Get filter values from GET (sanitize)
 $education_year = isset($_GET['education_year']) ? intval($_GET['education_year']) : '';
@@ -76,6 +76,27 @@ class AdvancedCandidateMatcher {
             'importance_skills' => 'high',
             'importance_social' => 'medium'
         ];
+    }
+    
+    /**
+     * NEW METHOD: Get education level from course
+     */
+    private function getEducationLevel($course) {
+        if (empty($course)) return 0;
+        
+        $course_lower = strtolower($course);
+        
+        if (strpos($course_lower, 'phd') !== false || strpos($course_lower, 'doctorate') !== false) {
+            return 4;
+        } elseif (strpos($course_lower, 'master') !== false || strpos($course_lower, 'msc') !== false || strpos($course_lower, 'mba') !== false) {
+            return 3;
+        } elseif (strpos($course_lower, 'bachelor') !== false || strpos($course_lower, 'degree') !== false || strpos($course_lower, 'bsc') !== false || strpos($course_lower, 'ba') !== false) {
+            return 2;
+        } elseif (strpos($course_lower, 'diploma') !== false || strpos($course_lower, 'hnd') !== false) {
+            return 1;
+        }
+        
+        return 0;
     }
     
     /**
@@ -157,24 +178,10 @@ class AdvancedCandidateMatcher {
         
         // 1. Education Level (0-8 points)
         if (!empty($candidate['course'])) {
-            $course = strtolower($candidate['course']);
-            $edu_level = 0;
+            $edu_level = $this->getEducationLevel($candidate['course']);
             
-            if (strpos($course, 'phd') !== false || strpos($course, 'doctorate') !== false) {
-                $score += 8;
-                $edu_level = 4;
-            } elseif (strpos($course, 'master') !== false || strpos($course, 'msc') !== false || strpos($course, 'mba') !== false) {
-                $score += 7;
-                $edu_level = 3;
-            } elseif (strpos($course, 'bachelor') !== false || strpos($course, 'degree') !== false || strpos($course, 'bsc') !== false || strpos($course, 'ba') !== false) {
-                $score += 6;
-                $edu_level = 2;
-            } elseif (strpos($course, 'diploma') !== false || strpos($course, 'hnd') !== false) {
-                $score += 5;
-                $edu_level = 1;
-            } else {
-                $score += 3;
-            }
+            // Base score based on education level
+            $score += ($edu_level + 1) * 2; // Level 0-4 becomes 2-10 points
             
             // Match education level filter
             if (!empty($filters['education_level'])) {
@@ -521,7 +528,7 @@ class AdvancedCandidateMatcher {
         
         // Additional info (2 points)
         if (!empty($candidate['study_year'])) $completeness += 1;
-        if (!empty($candidate['start_year'])) $completeness += 1;
+        if (!empty($candidate['start_year'])) $compleness += 1;
         
         return min(15, $completeness);
     }

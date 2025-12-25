@@ -82,7 +82,7 @@ if (isset($_POST['submit'])) {
 
             } elseif ($table === 'students') {
                 $_SESSION['student_id'] = $user['id'];
-                $redirect = "user-profile.php";
+                $redirect = "pages-youmay-know.php";
 
             } elseif ($table === 'companies') {
                 $_SESSION['company_id'] = $user['id'];

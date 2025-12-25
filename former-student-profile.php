@@ -1,5 +1,5 @@
 <?php
-require_once '../includes/db-conn.php';
+require_once 'includes/db-conn.php';
 session_start();
 
 // Get former student ID from URL
@@ -9,8 +9,8 @@ if (!isset($_GET['former_student_id'])) {
 }
 
 // Fetch user details
-$user_id = $_SESSION['admin_id'];
-$sql = "SELECT * FROM admins WHERE id = ?";
+$user_id = $_SESSION['student_id'];
+$sql = "SELECT * FROM students WHERE id = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $user_id);
 $stmt->execute();
@@ -165,7 +165,7 @@ if (!empty($student['course_id'])) {
 <head>
     <meta charset="UTF-8">
     <title><?= htmlspecialchars($student['username']) ?>'s Profile - EduWide</title>
-    <?php include_once("../includes/css-links-inc.php"); ?>
+    <?php include_once("includes/css-links-inc.php"); ?>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         :root {
@@ -479,8 +479,8 @@ if (!empty($student['course_id'])) {
 </head>
 <body>
 
-    <?php include_once("../includes/header.php") ?>
-    <?php include_once("../includes/formers-sidebar.php") ?>
+    <?php include_once("includes/header.php") ?>
+    <?php include_once("includes/students-sidebar.php") ?>
 
     <main id="main" class="main">
         <div class="pagetitle">
@@ -501,10 +501,10 @@ if (!empty($student['course_id'])) {
                     <div class="profile-header">
                         <div class="row align-items-center">
                             <div class="col-md-3 text-center">
-                                <img src="../oddstudents/<?= htmlspecialchars($student['profile_picture']) ?>" 
+                                <img src="oddstudents/<?= htmlspecialchars($student['profile_picture']) ?>" 
                                      alt="Profile Picture" 
                                      class="profile-picture"
-                                     onerror="this.src='../uploads/profile_pictures/default.png'">
+                                     onerror="this.src='uploads/profile_pictures/default.png'">
                             </div>
                             <div class="col-md-6 text-center text-md-start">
                                 <h1 class="mb-2"><?= htmlspecialchars($student['username']) ?></h1>
@@ -794,7 +794,7 @@ if (!empty($student['course_id'])) {
                                                         $img_stmt->close();
                                                         ?>
                                                         <?php if ($project_image): ?>
-                                                            <img src="../<?= htmlspecialchars($project_image['image_path']) ?>" 
+                                                            <img src="<?= htmlspecialchars($project_image['image_path']) ?>" 
                                                                  class="project-image" 
                                                                  alt="<?= htmlspecialchars($project['title']) ?>"
                                                                  data-bs-toggle="modal" 
@@ -874,12 +874,12 @@ if (!empty($student['course_id'])) {
                                                                     <div class="row">
                                                                         <?php foreach ($photos as $photo): ?>
                                                                             <div class="col-4 mb-3">
-                                                                                <img src="../<?= htmlspecialchars($photo['image_path']) ?>" 
+                                                                                <img src="<?= htmlspecialchars($photo['image_path']) ?>" 
                                                                                      class="img-thumbnail" 
                                                                                      style="width: 100%; height: 100px; object-fit: cover; cursor: pointer;"
                                                                                      data-bs-toggle="modal" 
                                                                                      data-bs-target="#imageModal"
-                                                                                     data-img="../<?= htmlspecialchars($photo['image_path']) ?>">
+                                                                                     data-img="<?= htmlspecialchars($photo['image_path']) ?>">
                                                                             </div>
                                                                         <?php endforeach; ?>
                                                                     </div>
@@ -935,8 +935,8 @@ if (!empty($student['course_id'])) {
                                             <?php foreach ($achievements as $ach): ?>
                                                 <div class="col-md-6 mb-3">
                                                     <div class="achievement-card">
-                                                        <?php if (!empty($ach['image_path']) && file_exists('../oddstudents/' . $ach['image_path'])): ?>
-                                                            <img src="../oddstudents/<?= htmlspecialchars($ach['image_path']) ?>" 
+                                                        <?php if (!empty($ach['image_path']) && file_exists('oddstudents/' . $ach['image_path'])): ?>
+                                                            <img src="oddstudents/<?= htmlspecialchars($ach['image_path']) ?>" 
                                                                  class="card-img-top" 
                                                                  alt="Achievement Image" 
                                                                  style="height: 200px; object-fit: cover;">
@@ -971,8 +971,8 @@ if (!empty($student['course_id'])) {
                                             <?php foreach ($certifications as $cert): ?>
                                                 <div class="col-md-6 mb-3">
                                                     <div class="certification-card">
-                                                        <?php if (!empty($cert['image_path']) && file_exists('../oddstudents/' . $cert['image_path'])): ?>
-                                                            <img src="../oddstudents/<?= htmlspecialchars($cert['image_path']) ?>" 
+                                                        <?php if (!empty($cert['image_path']) && file_exists('oddstudents/' . $cert['image_path'])): ?>
+                                                            <img src="oddstudents/<?= htmlspecialchars($cert['image_path']) ?>" 
                                                                  class="card-img-top" 
                                                                  alt="Certification Image" 
                                                                  style="height: 200px; object-fit: cover;">
@@ -1029,8 +1029,8 @@ if (!empty($student['course_id'])) {
         </div>
     </div>
 
-    <?php include_once("../includes/footer.php") ?>
-    <?php include_once("../includes/js-links-inc.php") ?>
+    <?php include_once("includes/footer.php") ?>
+    <?php include_once("includes/js-links-inc.php") ?>
 
     <script>
         // Image modal functionality
