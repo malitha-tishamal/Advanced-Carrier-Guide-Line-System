@@ -1266,7 +1266,7 @@
       <h1>Welcome to EDUWIDE</h1>
       <h2>Advanced Career Guidance System</h2>
       <br>
-      <p>A comprehensive platform connecting <span class="highlight">active and former students</span> with Python-based intelligent algorithm for career matching, skill analysis, and employer connections. Our system provides detailed profiles, skill tracking, and intelligent suggestions for students, lecturers, and companies.</p>
+      <p>A comprehensive platform connecting <span class="highlight">active and former students</span> with intelligent algorithm for career matching, skill analysis, and employer connections. Our system provides detailed profiles, skill tracking, and intelligent suggestions for students, lecturers, and companies.</p>
       
       <div class="cta-buttons">
         <a href="#overview" class="btn btn-gradient"><i class="fas fa-rocket"></i> Explore System</a>
@@ -1285,7 +1285,7 @@
         </div>
         <div class="stat-item">
 <div class="stat-number">Smart Engine</div>
-<div class="stat-label">Python algorithm</div>
+<div class="stat-label">Intelligent algorithm</div>
 
         </div>
         <!--div class="stat-item">
@@ -1305,7 +1305,7 @@
         <div class="card-icon"><i class="fas fa-chart-network"></i></div>
 <div class="card-title">Intelligent Matching</div>
 <div class="card-text">
-Python-based intelligent algorithm that analyzes skills, projects, education, and experience to match students with the most suitable career opportunities
+Intelligent algorithm that analyzes skills, projects, education, and experience to match students with the most suitable career opportunities
 </div>
 
       </div>
@@ -1328,9 +1328,9 @@ Python-based intelligent algorithm that analyzes skills, projects, education, an
       <div class="overview-container">
         <div class="overview-card">
           <h3><i class="fas fa-bullseye"></i> Purpose</h3>
-          <p>Provide comprehensive career support for students and former students while enabling administrators, lecturers, and companies to manage user data, skills, achievements, and Python-based intelligent algorithm.</p>
+          <p>Provide comprehensive career support for students and former students while enabling administrators, lecturers, and companies to manage user data, skills, achievements, and intelligent algorithm.</p>
           <ul>
-            <li class="highlight-list">AI-powered career suggestions</li>
+            <li class="highlight-list">career suggestions</li>
             <li class="highlight-list">Skill and project tracking</li>
             <li class="highlight-list">Top student identification</li>
             <li class="highlight-list">Employer-student connections</li>
@@ -1422,7 +1422,7 @@ Python-based intelligent algorithm that analyzes skills, projects, education, an
         <div class="role-card">
           <div class="role-icon"><i class="fas fa-building"></i></div>
           <h3 class="role-title">Company</h3>
-          <p class="role-description">Search for top candidates, Python-based intelligent algorithm, and connect with students.</p>
+          <p class="role-description">Search for top candidates, intelligent algorithm, and connect with students.</p>
           <ul class="role-features">
             <li><i class="fas fa-check-circle"></i> Candidate Search</li>
             <li><i class="fas fa-check-circle"></i> Intelligent Matching</li>
@@ -1458,7 +1458,7 @@ Python-based intelligent algorithm that analyzes skills, projects, education, an
         <div class="feature-card">
           <div class="feature-icon"><i class="fas fa-trophy"></i></div>
           <h3 class="feature-title">Achievements & Certifications</h3>
-          <p class="feature-description">Students can add and showcase achievements, certifications, and events with image support, all used in AI suggestion algorithms.</p>
+          <p class="feature-description">Students can add and showcase achievements, certifications, and events with image support, all used in Advanced suggestion algorithms.</p>
         </div>
         
         <div class="feature-card">
@@ -1486,7 +1486,7 @@ Python-based intelligent algorithm that analyzes skills, projects, education, an
   <section class="ai-section" id="ai">
     <div class="container">
       <div class="section-header">
-        <h2 class="section-title">Python-based intelligent algorithm</h2>
+        <h2 class="section-title">Intelligent algorithm</h2>
         <p class="section-subtitle">Intelligent algorithm that matches students with career opportunities based on skills, projects, education, and experience.</p>
       </div>
       
@@ -1546,10 +1546,11 @@ Python-based intelligent algorithm that analyzes skills, projects, education, an
         <div class="footer-column">
           <h3>User Access</h3>
           <ul class="footer-links">
-            <li><a href=""><i class="fas fa-sign-in-alt"></i> Admin Login</a></li>
-            <li><a href=""><i class="fas fa-chalkboard-teacher"></i> Lecturer Login</a></li>
-            <li><a href=""><i class="fas fa-user-graduate"></i> Student Login</a></li>
-            <li><a href=""><i class="fas fa-building"></i> Company Login</a></li>
+            <li><a href="admin/pages-signup.php"><i class="fas fa-sign-in-alt"></i> Admin Login</a></li>
+            <li><a href="lectures/pages-signup.php"><i class="fas fa-chalkboard-teacher"></i> Lecturer Login</a></li>
+            <li><a href="oddstudents/pages-signup.php"><i class="fas fa-user-graduate"></i> Student Login</a></li>
+            <li><a href="pages-signup.php"><i class="fas fa-user-graduate"></i> Former Student Login</a></li>
+            <li><a href="companies/pages-signup.php"><i class="fas fa-building"></i> Company Login</a></li>
           </ul>
         </div>
         
