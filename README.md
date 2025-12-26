@@ -1,23 +1,79 @@
-# Devlk-Team-Eduwide
+# 🚀 Project: Advanced Career Guideline System
 
-Cloning this Repo
-* Use GitHub Desktop to Clone and Working with this Repo.
+I am **excited to introduce** my **Advanced Career Guideline System** — a role-based, intelligent career management platform connecting **Admins, Lecturers, Active & Former Students, and Companies**.  
+This system **streamlines career guidance**, highlights **top talent through intelligent matching**, and enables **efficient, data-driven talent discovery**.
 
-* You Don't need to make a folder for clone this repo.
-Clone this to:
-   for Xampp Users -> C:\xampp\htdocs
-   for Wamp Users -> C:\wamp\www
+---
 
-Dtabase Setup
-You need to make a database name like 'eduwide' for open this project in your localhost.
-Localhost Database Name = eduwide
+## 🔗 Project Access & Documentation
 
+- 📘 **System Documentation:** [https://2cm.es/1gODF](https://2cm.es/1gODF)  
+- 🔐 **Admin Account:** [https://shorturl.at/JPpta](https://shorturl.at/JPpta)  
+- 🧑‍🏫 **Lecturer Account:** [https://shorturl.at/ZBvyF](https://shorturl.at/ZBvyF)  
+- 🎓 **Active Student Account:** [https://shorturl.at/PlQnG](https://shorturl.at/PlQnG)  
+- 🎓 **Former Student Account:** [https://shorturl.at/PnpqV](https://shorturl.at/PnpqV)  
+- 🏢 **Company Account:** [https://shorturl.at/GBULc](https://shorturl.at/GBULc)  
 
-Attention to these things
-* Before start the works, you have to pull the project.
-* Don't edit codes, without asking from @malitha.
+---
 
-Best Practices
-* You have to name custom css classes like this -> my-heading
-* You have to name custom ids like this -> idOne
-* When naming functions, use a name taht describes what the function does ->
+## 🔑 Key Features
+
+### 🔐 Admin Module
+- **Centralized management** of Admins, Lecturers, Students, Alumni, and Companies  
+- Monitor and control **user profiles, activities, and approvals**  
+- Manage **courses, batches, skills, and system-wide reports**  
+- **Analytics dashboards** with insights into users, skills, and performance  
+- Ensure platform **accuracy, quality, and smooth operation**  
+
+### 🧑‍🏫 Lecturer Module
+- Monitor and review **student & alumni profiles**  
+- Approve and manage **student accounts**  
+- Provide **academic and career guidance** using insights from **skills, projects, and achievements**  
+- Support student growth through **performance tracking and evaluation**  
+
+### 🎓 Active & Former Students
+- Modern **professional profiles** with **bio, education timeline, work experience, projects, achievements, and certifications**  
+- **Top performers highlighted** using an **Intelligent Suggestion Matching Algorithm**  
+- Clean, **card-based UI** for easy browsing and filtering  
+- **Skills database:** 2700+ skills across 13+ categories  
+
+### 🏢 Company Module
+- Discover **top talent** using **intelligent candidate matching**  
+- Students ranked by **skills, projects, certifications, education, and work experience**  
+- Advanced filters by **batch, course, and availability**  
+- **Match quality indicators:** Excellent (80%+), Good (60–79%), Average (40–59%)  
+
+### 🧠 Intelligent Matching Algorithm
+- Automatically highlights **top-performing students**  
+- Dynamically suggests **best candidates** based on multiple parameters  
+- Advanced **multi-filter system** supporting up to 20 skill filters simultaneously  
+
+### 🎨 UI / UX
+- Modern, **responsive, card-based dashboards** for all roles  
+- **Interactive and visually appealing** professional profiles  
+- **Social media integration:** LinkedIn, GitHub, Blog, Facebook  
+
+### 💡 Impact
+- Bridges the gap between **education and employment**  
+- Enables students to **showcase verified skills and achievements**  
+- Helps companies **efficiently identify suitable candidates**  
+- Provides **actionable insights** for admins and lecturers  
+
+### 🌐 Tech Stack & Platform
+- Mobile-friendly, **data-driven architecture**  
+- Extensive and scalable **skills database**  
+- Modern dashboards with **timeline-based interfaces**  
+
+---
+
+## ⚙️ Getting Started
+
+### Cloning this Repo
+- Use **GitHub Desktop** to clone and work with this repo  
+- No need to create a folder for cloning  
+- For **XAMPP:** `C:\xampp\htdocs`  
+- For **WAMP:** `C:\wamp\www`  
+
+### Database Setup
+- Create a database named: **`eduwide`**  
+
