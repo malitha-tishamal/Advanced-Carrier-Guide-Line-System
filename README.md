@@ -33,18 +33,18 @@ This system **streamlines career guidance**, highlights **top talent through int
 
 ### 🎓 Active & Former Students
 - Modern **professional profiles** with **bio, education timeline, work experience, projects, achievements, and certifications**  
-- **Top performers highlighted** using an **Intelligent Suggestion Matching Algorithm**  
+- **Top performers highlighted** using a **Powerful AI-Based Suggestion Matching Algorithm**  
 - Clean, **card-based UI** for easy browsing and filtering  
 - **Skills database:** 2700+ skills across 13+ categories  
 
 ### 🏢 Company Module
-- Discover **top talent** using **intelligent candidate matching**  
+- Discover **top talent** using **powerful AI-based candidate matching**  
 - Students ranked by **skills, projects, certifications, education, and work experience**  
 - Advanced filters by **batch, course, and availability**  
 - **Match quality indicators:** Excellent (80%+), Good (60–79%), Average (40–59%)  
 
-### 🧠 Intelligent Matching Algorithm
-- Automatically highlights **top-performing students**  
+### 🧠 Powerful AI-Based Matching Algorithm
+- Automatically highlights **top-performing students** using advanced predictive logic  
 - Dynamically suggests **best candidates** based on multiple parameters  
 - Advanced **multi-filter system** supporting up to 20 skill filters simultaneously  
 
