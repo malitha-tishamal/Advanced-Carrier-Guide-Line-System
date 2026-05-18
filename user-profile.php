@@ -4,20 +4,24 @@ require_once 'includes/db-conn.php';
 
 // Redirect if not logged in
 if (!isset($_SESSION['student_id'])) {
-    header("Location: ../index.php");
+    header("Location: index.php");
     exit();
 }
 
-// Fetch user details
+// Fetch user details securely via PDO prepared queries
 $user_id = $_SESSION['student_id'];
-$sql = "SELECT * FROM students WHERE id = ?";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $user_id);
-$stmt->execute();
-$result = $stmt->get_result();
-$user = $result->fetch_assoc();
-$stmt->close();
+$stmt = $pdo->prepare("SELECT * FROM students WHERE id = :id LIMIT 1");
+$stmt->execute(['id' => $user_id]);
+$user = $stmt->fetch();
 
+if ($user) {
+    // Decrypt encrypted PII from the database
+    $user['nic'] = SecureShield::decryptData($user['nic']);
+    $user['mobile'] = SecureShield::decryptData($user['mobile']);
+}
+
+// Generate secure CSRF token for forms
+$csrf_token = SecureShield::generateCSRFToken();
 ?>
 
 <!DOCTYPE html>
@@ -136,6 +140,7 @@ $stmt->close();
                                     </div>
                                     <div class="container">
                                         <form action="update-profile.php" method="POST">
+                                            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token) ?>">
                                             <!-- Full Name -->
                                             <div class="row">
                                                 <div class="col-lg-3 col-md-4 label">Full Name</div>
@@ -216,6 +221,7 @@ $stmt->close();
 
                                     <div class="container">
                                         <form action="update-socialmedia.php" method="POST">
+                                            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token) ?>">
                                             <div class="row">
                                                 <div class="col-lg-3 col-md-4 label">LinkedIn <i class="bi bi-linkedin"></i></div>
                                                 <div class="col-lg-9 col-md-8">
@@ -377,7 +383,7 @@ $stmt->close();
                     // Handle the success response (should return the new profile picture filename)
                     if (response.status === "success") {
                         // Update the profile picture in real time
-                        $('#profilePic').attr('src', '../uploads/' + response.newProfilePic);
+                        $('#profilePic').attr('src', 'uploads/' + response.newProfilePic);
                         $('#message').html('<div class="alert alert-success">Profile picture updated successfully!</div>');
                     } else {
                         $('#message').html('<div class="alert alert-danger">Error: ' + response.message + '</div>');
