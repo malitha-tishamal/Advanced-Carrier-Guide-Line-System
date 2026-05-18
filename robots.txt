@@ -1,0 +1,45 @@
+# ===================================================
+# EduWide – Best Carrier Guide Line System
+# Author: Malitha Tishamal | malithatishamal
+# robots.txt – Search Engine Crawl Policy
+# ===================================================
+
+User-agent: *
+
+# --- Block Private / Admin Areas ---
+Disallow: /admin/
+Disallow: /includes/
+Disallow: /Database/
+Disallow: /uploads/
+Disallow: /assets/vendor/
+Disallow: /companies/
+Disallow: /lectures/
+Disallow: /oddstudents/
+Disallow: /*.sql$
+Disallow: /login-process.php
+Disallow: /register.php
+Disallow: /report-backend.php
+Disallow: /logout.php
+Disallow: /change-password.php
+Disallow: /reset-password.php
+Disallow: /forgot-password.php
+
+# --- Allow Public Pages ---
+Allow: /pages-home.php
+Allow: /pages-signup.php
+Allow: /pages-your-path.php
+Allow: /pages-youmay-know.php
+Allow: /pages-projects-skills.php
+Allow: /pages-courses.php
+Allow: /student-profile.php
+Allow: /former-student-profile.php
+Allow: /developer.php
+Allow: /assets/images/
+Allow: /assets/css/
+Allow: /assets/js/
+
+# --- Crawl-Delay (be gentle on shared hosting) ---
+Crawl-delay: 5
+
+# --- Sitemap Location ---
+Sitemap: https://malithatishamal.42web.io/sitemap.xml
