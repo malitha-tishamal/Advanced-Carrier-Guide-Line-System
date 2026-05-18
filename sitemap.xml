@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
+        http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+
+    <!-- ===== EduWide Career Guideline System – Sitemap ===== -->
+    <!-- Author: Malitha Tishamal | malithatishamal -->
+    <!-- System: Best Carrier Guide Line System -->
+
+    <!-- Homepage / Login -->
+    <url>
+        <loc>https://malithatishamal.42web.io/</loc>
+        <lastmod>2026-05-18</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>1.0</priority>
+    </url>
+
+    <!-- Public Landing Page -->
+    <url>
+        <loc>https://malithatishamal.42web.io/pages-home.php</loc>
+        <lastmod>2026-05-18</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.95</priority>
+    </url>
+
+    <!-- Student Registration -->
+    <url>
+        <loc>https://malithatishamal.42web.io/pages-signup.php</loc>
+        <lastmod>2026-05-18</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+
+    <!-- Career Path Finder -->
+    <url>
+        <loc>https://malithatishamal.42web.io/pages-your-path.php</loc>
+        <lastmod>2026-05-18</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.85</priority>
+    </url>
+
+    <!-- You May Know (People Discovery) -->
+    <url>
+        <loc>https://malithatishamal.42web.io/pages-youmay-know.php</loc>
+        <lastmod>2026-05-18</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.75</priority>
+    </url>
+
+    <!-- Projects & Skills -->
+    <url>
+        <loc>https://malithatishamal.42web.io/pages-projects-skills.php</loc>
+        <lastmod>2026-05-18</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.7</priority>
+    </url>
+
+    <!-- Courses Directory -->
+    <url>
+        <loc>https://malithatishamal.42web.io/pages-courses.php</loc>
+        <lastmod>2026-05-18</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+
+    <!-- Developer / About -->
+    <url>
+        <loc>https://malithatishamal.42web.io/developer.php</loc>
+        <lastmod>2026-05-18</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.6</priority>
+    </url>
+
+    <!-- Former Student Public Profile -->
+    <url>
+        <loc>https://malithatishamal.42web.io/former-student-profile.php</loc>
+        <lastmod>2026-05-18</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+
+    <!-- Student Public Profile -->
+    <url>
+        <loc>https://malithatishamal.42web.io/student-profile.php</loc>
+        <lastmod>2026-05-18</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+
+</urlset>
