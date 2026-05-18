@@ -1,10 +1,10 @@
 <?php
 session_start();
-require_once '../includes/db-conn.php';
+require_once 'includes/db-conn.php';
 
 // Redirect if not logged in
 if (!isset($_SESSION['admin_id'])) {
-    header("Location: ../index.php");
+    header("Location: index.php");
     exit();
 }
 
@@ -29,7 +29,7 @@ $stmt->close();
     <title>Users Profile - Eduwide</title>
     <meta content="" name="description">
     <meta content="" name="keywords">
-    <?php include_once ("../includes/css-links-inc.php"); ?>
+    <?php include_once ("includes/css-links-inc.php"); ?>
     <style>
         /* Styling for the popup */
         .popup-message {
@@ -87,8 +87,8 @@ $stmt->close();
         ?>
     <?php endif; ?>
 
-    <?php include_once ("../includes/header.php") ?>
-    <?php include_once ("../includes/sadmin-sidebar.php") ?>
+    <?php include_once ("includes/header.php") ?>
+    <?php include_once ("includes/sadmin-sidebar.php") ?>
 
     <main id="main" class="main">
         <div class="pagetitle">
@@ -222,9 +222,9 @@ $stmt->close();
         </section>
     </main>
 
-    <?php include_once ("../includes/footer2.php") ?>
+    <?php include_once ("includes/footer2.php") ?>
     <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
-    <?php include_once ("../includes/js-links-inc.php") ?>
+    <?php include_once ("includes/js-links-inc.php") ?>
     <script>
         $(document).ready(function() {
             // On form submit
