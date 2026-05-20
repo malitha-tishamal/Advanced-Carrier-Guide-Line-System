@@ -43,10 +43,12 @@ This system **streamlines career guidance**, highlights **top talent through int
 - Advanced filters by **batch, course, and availability**  
 - **Match quality indicators:** Excellent (80%+), Good (60–79%), Average (40–59%)  
 
-### 🧠 Intelligent Matching Algorithm
-- Automatically highlights **top-performing students**  
-- Dynamically suggests **best candidates** based on multiple parameters  
-- Advanced **multi-filter system** supporting up to 20 skill filters simultaneously  
+### 🤖 Powerful AI-Based Matching System
+- **Dual-Engine AI Architecture:** Integrated Neural Network and NLP engines for superior accuracy.
+- **Neural Network Layer:** Employs feed-forward logic with **ReLU & Sigmoid activation functions** for structured data ranking.
+- **NLP Semantic Engine:** Implements **TF-IDF and Cosine Similarity** (LinkedIn Standard) to analyze skill semantics.
+- **Intelligent Analysis:** Provides real-time "AI Insights" for every candidate profile.
+- **Advanced multi-filter system:** Supporting complex multi-parameter searches with probabilistic match scores.  
 
 ### 🎨 UI / UX
 - Modern, **responsive, card-based dashboards** for all roles  
