@@ -7,34 +7,48 @@ include_once("includes/db-conn.php");
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Get form inputs and sanitize them
-    $username    = $_POST['username'];
-    $reg_id      = $_POST['reg_id'];
-    $nic         = $_POST['nic'];
-    $study_year  = $_POST['study_year'];
-    $email       = $_POST['email'];
-    $mobile      = $_POST['mobile'];
-    $password    = password_hash($_POST['password'], PASSWORD_BCRYPT); // Password hashing
-    $course_id   = $_POST['course_id']; // NEW: HND course ID
+    $username    = trim($_POST['username']);
+    $reg_id      = trim($_POST['reg_id']);
+    $raw_nic     = trim($_POST['nic']);
+    $study_year  = trim($_POST['study_year']);
+    $email       = trim($_POST['email']);
+    $raw_mobile  = trim($_POST['mobile']);
+    $password    = password_hash($_POST['password'], PASSWORD_BCRYPT);
+    $course_id   = $_POST['course_id']; 
 
-    // Check for duplicate email or NIC
-    $checkQuery = "SELECT * FROM students WHERE email = ? OR nic = ?";
-    if ($stmt = $conn->prepare($checkQuery)) {
-        $stmt->bind_param("ss", $email, $nic);
-        $stmt->execute();
-        $result = $stmt->get_result();
+    // Encrypt Sensitive PII for database storage
+    $nic = SecureShield::encryptData($raw_nic);
+    $mobile = SecureShield::encryptData($raw_mobile);
 
-        if ($result->num_rows > 0) {
-            // Duplicate found
-            $_SESSION['status'] = 'error';
-            $_SESSION['message'] = 'Email or NIC already exists. Please try again with different details.';
-            header("Location: pages-signup.php");
-            $stmt->close();
-            exit();
+    // Check for duplicate Email (Fast Index Check)
+    $emailCheck = $conn->prepare("SELECT id FROM students WHERE email = ?");
+    $emailCheck->bind_param("s", $email);
+    $emailCheck->execute();
+    if ($emailCheck->get_result()->num_rows > 0) {
+        $_SESSION['status'] = 'error';
+        $_SESSION['message'] = 'Email already exists. Please try again with a different email.';
+        header("Location: pages-signup.php");
+        exit();
+    }
+    
+    // Check for duplicate NIC (Secure Iterative Decryption Check)
+    $nicCheck = $conn->query("SELECT id, nic FROM students");
+    $duplicate_nic = false;
+    while($row = $nicCheck->fetch_assoc()) {
+        if(SecureShield::decryptData($row['nic']) === $raw_nic) {
+            $duplicate_nic = true;
+            break;
         }
-        $stmt->close();
     }
 
-    // Prepare SQL query to insert student data into the database, now including course_id
+    if ($duplicate_nic) {
+        $_SESSION['status'] = 'error';
+        $_SESSION['message'] = 'NIC already exists in our system. Please try again.';
+        header("Location: pages-signup.php");
+        exit();
+    }
+
+    // Prepare SQL query to insert student data into the database
     $query = "INSERT INTO students (username, reg_id, nic, study_year, email, mobile, password, course_id) 
               VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
