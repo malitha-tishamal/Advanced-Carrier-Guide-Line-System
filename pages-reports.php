@@ -4,11 +4,11 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 session_start();
-require_once '../includes/db-conn.php';
+require_once 'includes/db-conn.php';
 
 // Redirect if not logged in
 if (!isset($_SESSION['admin_id'])) {
-    header("Location: ../index.php");
+    header("Location: index.php");
     exit();
 }
 
@@ -49,7 +49,7 @@ $stats = $stats_result->fetch_assoc();
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Reports - EduWide</title>
-<?php include_once("../includes/css-links-inc.php"); ?>
+<?php include_once("includes/css-links-inc.php"); ?>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <style>
@@ -82,8 +82,8 @@ body { background: #f5f7fa; font-family: 'Segoe UI', sans-serif; }
 </style>
 </head>
 <body>
-<?php include_once("../includes/header.php"); ?>
-<?php include_once("../includes/sadmin-sidebar.php"); ?>
+<?php include_once("includes/header.php"); ?>
+<?php include_once("includes/sadmin-sidebar.php"); ?>
 
 <main id="main" class="main">
     <div class="pagetitle">
@@ -167,7 +167,7 @@ body { background: #f5f7fa; font-family: 'Segoe UI', sans-serif; }
                                 <?php if(!empty($report_group[0]['photo_path'])): ?>
                                     <div class="report-photos">
                                         <?php foreach($report_group as $photo): ?>
-                                            <img src="../uploads/reports/<?php echo $photo['photo_path'];?>" alt="photo" data-bs-toggle="modal" data-bs-target="#photoModal" data-photo-src="../uploads/reports/<?php echo $photo['photo_path'];?>">
+                                            <img src="uploads/reports/<?php echo $photo['photo_path'];?>" alt="photo" data-bs-toggle="modal" data-bs-target="#photoModal" data-photo-src="uploads/reports/<?php echo $photo['photo_path'];?>">
                                         <?php endforeach;?>
                                     </div>
                                 <?php endif;?>
@@ -182,8 +182,8 @@ body { background: #f5f7fa; font-family: 'Segoe UI', sans-serif; }
     </section>
 </main>
 
-<?php include_once("../includes/footer.php"); ?>
-<?php include_once("../includes/js-links-inc.php"); ?>
+<?php include_once("includes/footer.php"); ?>
+<?php include_once("includes/js-links-inc.php"); ?>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
