@@ -20,9 +20,22 @@ if ($result = $conn->query($courseQuery)) {
 <head>
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <title>Create Active Students Account - EduWide</title>
-    <meta content="" name="description">
-    <meta content="" name="keywords">
+
+    <!-- ===== PRIMARY SEO META ===== -->
+    <title>Student Registration | EduWide – Best Career Guideline System by Malitha Tishamal</title>
+    <meta name="description" content="Create your EduWide student account – the best career guideline system by Malitha Tishamal. Join thousands of students getting AI-powered career guidance and company connections.">
+    <meta name="keywords" content="malithatishamal, carrier guide line system, student registration, career guidance, HND student, eduwide signup, best career platform">
+    <meta name="author" content="Malitha Tishamal">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://malithatishamal.42web.io/pages-signup.php">
+
+    <!-- ===== OPEN GRAPH ===== -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://malithatishamal.42web.io/pages-signup.php">
+    <meta property="og:title" content="Join EduWide – Best Career Guideline System | Malitha Tishamal">
+    <meta property="og:description" content="Register on EduWide, the best carrier guide line system by malithatishamal. Get AI-powered career matches, connect with companies and unlock your career potential.">
+    <meta property="og:image" content="https://malithatishamal.42web.io/assets/images/logos/eduwide-logo.png">
+    <meta property="og:site_name" content="EduWide Career Guideline System">
 
     <?php include_once ("includes/css-links-inc.php"); ?>
     <style>
@@ -48,6 +61,11 @@ if ($result = $conn->query($courseQuery)) {
 </head>
 
 <body>
+    <!-- 2026 Cyberpunk Floating Background Orbs -->
+    <div class="cyber-orb cyber-orb-1"></div>
+    <div class="cyber-orb cyber-orb-2"></div>
+    <div class="cyber-orb cyber-orb-3"></div>
+
     <!-- Displaying the message from the session -->
     <?php if (isset($_SESSION['status'])): ?>
         <div class="popup-message <?php echo ($_SESSION['status'] == 'success') ? '' : 'error-popup'; ?>" id="popup-alert">
