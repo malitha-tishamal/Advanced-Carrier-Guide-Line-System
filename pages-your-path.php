@@ -44,7 +44,11 @@ $stmt->close();
 <head>
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <title>Details - EduWide</title>
+    <title>Your Career Path | EduWide – Best Career Guideline System by Malitha Tishamal</title>
+    <meta name="description" content="Build your career path on EduWide – the best carrier guide line system by Malitha Tishamal. Add your experience, education, skills, and get matched with top companies.">
+    <meta name="keywords" content="malithatishamal, carrier guide line system, career path builder, student profile, HND career, eduwide">
+    <meta name="author" content="Malitha Tishamal">
+    <meta name="robots" content="noindex, follow">
     <?php include_once("includes/css-links-inc.php"); ?>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script> 
     <style>
